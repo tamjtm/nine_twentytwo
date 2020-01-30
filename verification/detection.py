@@ -140,14 +140,53 @@ def framing(img, no, all_contours, chromosome):
     return img
 
 
-def predict_922(meta_img, model_n, model_p, chromosome, all_contours, full_meta_img):
-    if chromosome == 9:
-        n = 36
+def predict_22(meta_img, model_find, model_classify, all_contours, full_meta_img):
+    chromosome = 22
+    n = 5
+
+    find = model_find.predict_classes(meta_img[:n])
+    classify = model_classify.predict_classes(meta_img[:n])
+
+    index_n, index_p, result_img = [], [], []
+    for j in range(len(meta_img)):
+        if j < n and len(result_img) < 4:
+            img = array_to_img(meta_img[j])
+
+            if find[j] == 1:  # chr 22
+                frame_img = framing(full_meta_img, j, all_contours, chromosome)
+
+                if classify[j] == 1:  # phila 22
+                    print(str(chromosome) + 'PH : ' + str(j))
+                    result_img.append(img)
+                    index_p.append(j+1)
+                else:  # normal 22
+                    print(str(chromosome) + 'NM : ' + str(j))
+                    result_img.append(img)
+                    index_n.append(j+1)
+        else:
+            break
+
+    if np.any(index_n) and not np.any(index_p):
+        print('Not found abnormal chromosome %d' % chromosome)
+        result = 0
+    elif np.any(index_p) and np.any(index_n):
+        print('Found abnormal chromosome %d' % chromosome)
+        result = 1
     else:
-        n = 5
+        print('cannot predict this metaphase')
+        result = None
+
+    return result_img, result, frame_img
+
+
+def predict_9(meta_img, model_n, model_p, all_contours, full_meta_img):
+    chromosome = 9
+    n = 36
 
     predicted_N = model_n.predict_classes(meta_img[:n])
     predicted_P = model_p.predict_classes(meta_img[:n])
+
+    frame_img = full_meta_img
 
     index_n, index_p, result_img = [], [], []
     for j in range(len(meta_img)):
@@ -160,16 +199,16 @@ def predict_922(meta_img, model_n, model_p, chromosome, all_contours, full_meta_
             if predicted_N[j] == 1 and predicted_P[j] == 1:
                 print(str(chromosome) + 'chromosome: both model predict same result at index ' + str(j))
                 result_img.append(img)
-                index_n.append(j)
-                index_p.append(j)
+                index_n.append(j+1)
+                index_p.append(j+1)
             elif predicted_N[j] == 1:
                 print(str(chromosome) + 'NM : ' + str(j))
                 result_img.append(img)
-                index_n.append(j)
+                index_n.append(j+1)
             elif predicted_P[j] == 1:
                 print(str(chromosome) + 'PH : ' + str(j))
                 result_img.append(img)
-                index_p.append(j)
+                index_p.append(j+1)
         else:
             break
 

@@ -73,7 +73,7 @@
                                         <strong class="card-header p-1 text-center text-white bg-dark">Chromosome 9</strong>
                                         <div class="card-body">
                                             <img src="{{ img.chromosome_9a.url }}">
-                                            <img src="{{ img.chromosome_9b.url }}">
+                                            {% if img.chromosome_9b %}<img src="{{ img.chromosome_9b.url }}">{% endif %}
                                             {% if img.chromosome_9c %}<img src="{{ img.chromosome_9c.url }}">{% endif %}
                                             {% if img.chromosome_9d %}<img src="{{ img.chromosome_9d.url }}">{% endif %}
                                         </div>
@@ -82,7 +82,7 @@
                                         <strong class="card-header p-1 text-center text-white bg-dark">Chromosome 22</strong>
                                         <div class="card-body">
                                             <img src="{{ img.chromosome_22a.url }}">
-                                            <img src="{{ img.chromosome_22b.url }}">
+                                            {% if img.chromosome_22b %}<img src="{{ img.chromosome_22b.url }}">{% endif %}
                                             {% if img.chromosome_22c %}<img src="{{ img.chromosome_22c.url }}">{% endif %}
                                             {% if img.chromosome_22d %}<img src="{{ img.chromosome_22d.url }}">{% endif %}
                                         </div>

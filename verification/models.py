@@ -95,38 +95,45 @@ class Image(models.Model):
 
         model_9n = load_922_model('models/9N')
         model_9p = load_922_model('models/9P')
-        img_9, result_9, framed = predict_922(ch_img[0], model_9n, model_9p, 9, contours, meta_img)
+        img_9, result_9, framed = predict_9(ch_img[0], model_9n, model_9p, contours, meta_img)
 
-        model_22n = load_922_model('models/22N')
-        model_22p = load_922_model('models/22P')
-        img_22, result_22, framed = predict_922(ch_img[0], model_22n, model_22p, 22, contours, framed)
+        model_22f = load_922_model('models/22Find')
+        model_22c = load_922_model('models/22Classify')
+        img_22, result_22, framed = predict_22(ch_img[0], model_22f, model_22c, contours, framed)
         framed = array_to_img(framed)
 
-        if len(img_9) >= 2 and len(img_22) >= 2:
+        if len(img_9) > 0 and len(img_22) > 0:
             save_image(img_9[0], self.chromosome_9a)
-            save_image(img_9[1], self.chromosome_9b)
             save_image(img_22[0], self.chromosome_22a)
-            save_image(img_22[1], self.chromosome_22b)
             save_image(framed, self.result_image)
 
-            if len(img_9) == 3:
+            if len(img_9) == 2:
+                save_image(img_9[1], self.chromosome_9b)
+            elif len(img_9) == 3:
+                save_image(img_9[1], self.chromosome_9b)
                 save_image(img_9[2], self.chromosome_9c)
-            if len(img_9) == 4:
+            elif len(img_9) == 4:
+                save_image(img_9[1], self.chromosome_9b)
                 save_image(img_9[2], self.chromosome_9c)
                 save_image(img_9[3], self.chromosome_9d)
 
-            if len(img_22) == 3:
+            if len(img_22) == 2:
+                save_image(img_22[1], self.chromosome_22b)
+            elif len(img_22) == 3:
+                save_image(img_22[1], self.chromosome_22b)
                 save_image(img_22[2], self.chromosome_22c)
-            if len(img_22) == 4:
+            elif len(img_22) == 4:
+                save_image(img_22[1], self.chromosome_22b)
                 save_image(img_22[2], self.chromosome_22c)
                 save_image(img_22[3], self.chromosome_22d)
 
-            if result_9 + result_22 == 0:
-                print(">>> Negative")
-                return 0
-            elif result_9 + result_22 == 2:
-                print(">>> Positive")
-                return 1
+            if result_9 and result_22:
+                if result_9 + result_22 == 0:
+                    print(">>> Negative")
+                    return 0
+                elif result_9 + result_22 == 2:
+                    print(">>> Positive")
+                    return 1
         print(">>> Cannot detect")
         return None
 
