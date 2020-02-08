@@ -143,7 +143,7 @@ def temp_index_function (frame_img, temp_index, chro):
   from PIL import Image, ImageDraw, ImageFont
   font = ImageFont.truetype('Roboto-Bold.ttf', size=10)
   draw = ImageDraw.Draw(frame_img)
-  message = "ABCDEFGHI"
+  message = "ABCDEFGH"
   if chro == 9:
     color = 'rgb(255, 0, 0)'
   else:
