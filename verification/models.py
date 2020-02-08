@@ -1,10 +1,15 @@
+import sys
 from io import BytesIO
 
+from celery import task
 from django.contrib.auth.models import User
 from django.core.files import File
+from django.core.files.base import ContentFile
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
 
 # Create your models here.
+from django.db.models import Q
 from django.utils.deconstruct import deconstructible
 
 from verification.detection import *
@@ -37,7 +42,7 @@ class Case(models.Model):
     @property
     def get_result(self):
         all_count = pos_count = neg_count = 0
-        for img in Image.objects.filter(case=self).select_related():
+        for img in MetaphaseImage.objects.filter(case=self).select_related():
             if img.result == 1:
                 pos_count += 1
             elif img.result == 0:
@@ -58,34 +63,30 @@ class ImagePath(object):
         self.img_name = img_name
 
     def __call__(self, instance, filename):
-        return '/'.join([instance.case.id, instance.id, self.img_name + ".jpg"])
+        if isinstance(instance, MetaphaseImage):
+            return '/'.join([instance.case.id, instance.id, self.img_name + ".jpg"])
+        else:
+            return '/'.join([instance.metaphase.case.id, instance.metaphase.id, instance.name + ".jpg"])
 
 
 def set_images_path(image_name):
     return ImagePath(image_name)
 
 
-def save_image(img, ch):
-    temp = BytesIO()
-    img.save(temp, 'JPEG')
-    ch.save('temp.jpg', File(temp), save=False)
+def get_image(img):
+    img_io = BytesIO()
+    img.save(img_io, 'JPEG')
+    ch_img = InMemoryUploadedFile(img_io, 'ImageField', str(img), 'image/jpeg', sys.getsizeof(img_io), None)
+    return ch_img
 
 
-class Image(models.Model):
+class MetaphaseImage(models.Model):
     id = models.CharField(primary_key=True, max_length=30, default='none')
     original_image = models.ImageField(upload_to=set_images_path("original"))
     case = models.ForeignKey(Case, on_delete=models.CASCADE)
     upload_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     result = models.BooleanField(null=True, blank=True)
     result_image = models.ImageField(upload_to=set_images_path("result"), null=True, blank=True)
-    chromosome_9a = models.ImageField(upload_to=set_images_path("9a"), null=True, blank=True)
-    chromosome_9b = models.ImageField(upload_to=set_images_path("9b"), null=True, blank=True)
-    chromosome_9c = models.ImageField(upload_to=set_images_path("9c"), null=True, blank=True)
-    chromosome_9d = models.ImageField(upload_to=set_images_path("9d"), null=True, blank=True)
-    chromosome_22a = models.ImageField(upload_to=set_images_path("22a"), null=True, blank=True)
-    chromosome_22b = models.ImageField(upload_to=set_images_path("22b"), null=True, blank=True)
-    chromosome_22c = models.ImageField(upload_to=set_images_path("22c"), null=True, blank=True)
-    chromosome_22d = models.ImageField(upload_to=set_images_path("22d"), null=True, blank=True)
 
     class Meta:
         ordering = ('case', 'id', )
@@ -95,55 +96,51 @@ class Image(models.Model):
 
         model_9n = load_922_model('models/9N')
         model_9p = load_922_model('models/9P')
-        img_9, result_9, framed = predict_9(ch_img[0], model_9n, model_9p, contours, meta_img)
+        img_9, prob_9, pred_9, result_9, framed = predict_9(ch_img[0], model_9n, model_9p, contours, meta_img)
 
         model_22f = load_922_model('models/22Find')
         model_22c = load_922_model('models/22Classify')
-        img_22, result_22, framed = predict_22(ch_img[0], model_22f, model_22c, contours, framed)
+        img_22, prob_22, pred_22, result_22, framed = predict_22(ch_img[0], model_22f, model_22c, contours, framed)
         framed = array_to_img(framed)
 
-        if len(img_9) > 0 and len(img_22) > 0:
-            save_image(img_9[0], self.chromosome_9a)
-            save_image(img_22[0], self.chromosome_22a)
-            save_image(framed, self.result_image)
+        # if len(img_9) > 0 and len(img_22) > 0:
+        temp = BytesIO()
+        framed.save(temp, 'JPEG')
+        self.result_image.save('result.jpg', File(temp), save=False)
 
-            if len(img_9) == 2:
-                save_image(img_9[1], self.chromosome_9b)
-            elif len(img_9) == 3:
-                save_image(img_9[1], self.chromosome_9b)
-                save_image(img_9[2], self.chromosome_9c)
-            elif len(img_9) == 4:
-                save_image(img_9[1], self.chromosome_9b)
-                save_image(img_9[2], self.chromosome_9c)
-                save_image(img_9[3], self.chromosome_9d)
+        for i in range(len(img_9)):
+            chromosome = ChromosomeImage(metaphase=self,
+                                         type=9,
+                                         prediction=pred_9[i],
+                                         image=get_image(img_9[i]),
+                                         prob=prob_9[i])
+            chromosome.save()
 
-            if len(img_22) == 2:
-                save_image(img_22[1], self.chromosome_22b)
-            elif len(img_22) == 3:
-                save_image(img_22[1], self.chromosome_22b)
-                save_image(img_22[2], self.chromosome_22c)
-            elif len(img_22) == 4:
-                save_image(img_22[1], self.chromosome_22b)
-                save_image(img_22[2], self.chromosome_22c)
-                save_image(img_22[3], self.chromosome_22d)
+        for i in range(len(img_22)):
+            chromosome = ChromosomeImage(metaphase=self,
+                                         type=22,
+                                         prediction=pred_22[i],
+                                         image=get_image(img_22[i]),
+                                         prob=prob_22[i])
+            chromosome.save()
 
-            if result_9 and result_22:
-                if result_9 + result_22 == 0:
-                    print(">>> Negative")
-                    return 0
-                elif result_9 + result_22 == 2:
-                    print(">>> Positive")
-                    return 1
+        if result_9 is not None and result_22 is not None:
+            if result_9 + result_22 == 0:
+                print(">>> Negative")
+                return 0
+            elif result_9 + result_22 == 2:
+                print(">>> Positive")
+                return 1
         print(">>> Cannot detect")
         return None
 
     def save(self, flag=True, *args, **kwargs):
         if flag:
-            name = "%02d" % (Image.objects.filter(case=self.case).count()+1)
+            name = "%02d" % (MetaphaseImage.objects.filter(case=self.case).count() + 1)
             self.id = self.case.id + "_" + name
-            self.result = self.predict()
             self.save(flag=False, *args, **kwargs)
-        return super(Image, self).save(*args, **kwargs)
+            self.result = self.predict()
+        return super(MetaphaseImage, self).save(*args, **kwargs)
 
     def __str__(self):
         return str(self.id)
@@ -156,3 +153,43 @@ class Image(models.Model):
             return 'Negative'
         else:
             return 'cannot detect'
+
+    @property
+    def get_chromosome9(self):
+        return ChromosomeImage.objects.filter(
+            Q(metaphase=self) & Q(type=9)
+            ).order_by('name')
+
+    @property
+    def get_chromosome22(self):
+        return ChromosomeImage.objects.filter(
+            Q(metaphase=self) & Q(type=22)
+        ).order_by('name')
+
+
+class ChromosomeImage(models.Model):
+    id = models.CharField(primary_key=True, max_length=30, default='none')
+    name = models.CharField(max_length=2, default='none')
+    metaphase = models.ForeignKey(MetaphaseImage, on_delete=models.CASCADE)
+    type = models.IntegerField(choices=((9, 'Chromosome 9'), (22, 'Chromosome 22')))
+    prediction = models.BooleanField(null=True, blank=True)
+    image = models.ImageField(upload_to=set_images_path("."), null=True, blank=True)
+    prob = models.FloatField(null=True, blank=True)
+
+    def save(self, flag=True, *args, **kwargs):
+        if flag:
+            number = ChromosomeImage.objects.filter(
+                Q(metaphase=self.metaphase) & Q(type=self.type)
+                ).count()
+            self.name = str(self.type) + chr(65 + number)
+            self.id = self.metaphase.id + "_" + self.name
+            self.save(flag=False, *args, **kwargs)
+        return super(ChromosomeImage, self).save(*args, **kwargs)
+
+    @property
+    def get_prediction(self):
+        if self.prediction == 0:
+            return "NM"
+        elif self.prediction == 1:
+            return "PH"
+        return "None"

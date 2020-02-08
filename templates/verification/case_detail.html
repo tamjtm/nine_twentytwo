@@ -71,20 +71,34 @@
                                     <img class="d-block w-75" src="{{ img.result_image.url }}">
                                     <div class="card mt-1 d-inline-flex border-dark">
                                         <strong class="card-header p-1 text-center text-white bg-dark">Chromosome 9</strong>
-                                        <div class="card-body">
-                                            <img src="{{ img.chromosome_9a.url }}">
-                                            {% if img.chromosome_9b %}<img src="{{ img.chromosome_9b.url }}">{% endif %}
-                                            {% if img.chromosome_9c %}<img src="{{ img.chromosome_9c.url }}">{% endif %}
-                                            {% if img.chromosome_9d %}<img src="{{ img.chromosome_9d.url }}">{% endif %}
+                                        <div class="card-body d-inline-flex justify-content-center">
+                                            {% if img.get_chromosome9 %}
+                                                {% for ch in img.get_chromosome9 %}
+                                                    <div class="d-flex flex-column">
+                                                        <strong style="color: red;">{{ ch.name }}</strong>
+                                                        <img src="{{ ch.image.url }}">
+                                                        <small>{{ ch.get_prediction }}-{{ ch.prob | floatformat:2 }}</small>
+                                                    </div>
+                                                {% endfor %}
+                                            {% else %}
+                                                <div class="d-flex flex-column">None</div>
+                                            {% endif %}
                                         </div>
                                     </div>
                                     <div class="card mt-1 d-inline-flex border-dark">
                                         <strong class="card-header p-1 text-center text-white bg-dark">Chromosome 22</strong>
-                                        <div class="card-body">
-                                            <img src="{{ img.chromosome_22a.url }}">
-                                            {% if img.chromosome_22b %}<img src="{{ img.chromosome_22b.url }}">{% endif %}
-                                            {% if img.chromosome_22c %}<img src="{{ img.chromosome_22c.url }}">{% endif %}
-                                            {% if img.chromosome_22d %}<img src="{{ img.chromosome_22d.url }}">{% endif %}
+                                        <div class="card-body d-inline-flex justify-content-center">
+                                            {% if img.get_chromosome22 %}
+                                                {% for ch in img.get_chromosome22 %}
+                                                    <div class="d-flex flex-column">
+                                                        <strong style="color: blue;">{{ ch.name }}</strong>
+                                                        <img src="{{ ch.image.url }}">
+                                                        <small>{{ ch.get_prediction }}-{{ ch.prob | floatformat:2}}</small>
+                                                    </div>
+                                                {% endfor %}
+                                            {% else %}
+                                                <div class="d-flex flex-column">None</div>>
+                                            {% endif %}
                                         </div>
                                     </div>
                                 {% else %}

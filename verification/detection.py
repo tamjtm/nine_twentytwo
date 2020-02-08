@@ -146,8 +146,9 @@ def predict_22(meta_img, model_find, model_classify, all_contours, full_meta_img
 
     find = model_find.predict_classes(meta_img[:n])
     classify = model_classify.predict_classes(meta_img[:n])
+    prob = model_classify.predict(meta_img[:n])
 
-    index_n, index_p, result_img = [], [], []
+    index_n, index_p, result_img, result_prob, result_pred = [], [], [], [], []
     for j in range(len(meta_img)):
         if j < n and len(result_img) < 4:
             img = array_to_img(meta_img[j])
@@ -158,10 +159,14 @@ def predict_22(meta_img, model_find, model_classify, all_contours, full_meta_img
                 if classify[j] == 1:  # phila 22
                     print(str(chromosome) + 'PH : ' + str(j))
                     result_img.append(img)
+                    result_prob.append(prob[j][1])
+                    result_pred.append(True)
                     index_p.append(j+1)
                 else:  # normal 22
                     print(str(chromosome) + 'NM : ' + str(j))
                     result_img.append(img)
+                    result_prob.append(prob[j][0])
+                    result_pred.append(False)
                     index_n.append(j+1)
         else:
             break
@@ -176,7 +181,7 @@ def predict_22(meta_img, model_find, model_classify, all_contours, full_meta_img
         print('cannot predict this metaphase')
         result = None
 
-    return result_img, result, frame_img
+    return result_img, result_prob, result_pred, result, frame_img
 
 
 def predict_9(meta_img, model_n, model_p, all_contours, full_meta_img):
@@ -184,11 +189,13 @@ def predict_9(meta_img, model_n, model_p, all_contours, full_meta_img):
     n = 36
 
     predicted_N = model_n.predict_classes(meta_img[:n])
+    prob_n = model_n.predict(meta_img[:n])
     predicted_P = model_p.predict_classes(meta_img[:n])
+    prob_p = model_p.predict(meta_img[:n])
 
     frame_img = full_meta_img
 
-    index_n, index_p, result_img = [], [], []
+    index_n, index_p, result_img, result_prob, result_pred = [], [], [], [], []
     for j in range(len(meta_img)):
         if j < n and len(result_img) < 4:
             img = array_to_img(meta_img[j])
@@ -199,15 +206,25 @@ def predict_9(meta_img, model_n, model_p, all_contours, full_meta_img):
             if predicted_N[j] == 1 and predicted_P[j] == 1:
                 print(str(chromosome) + 'chromosome: both model predict same result at index ' + str(j))
                 result_img.append(img)
-                index_n.append(j+1)
-                index_p.append(j+1)
+                if prob_n[j][1] > prob_p[j][1]:
+                    index_n.append(j+1)
+                    result_prob.append(prob_n[j][1])
+                    result_pred.append(False)
+                else:
+                    index_p.append(j+1)
+                    result_prob.append(prob_p[j][1])
+                    result_pred.append(True)
             elif predicted_N[j] == 1:
                 print(str(chromosome) + 'NM : ' + str(j))
                 result_img.append(img)
+                result_prob.append(prob_n[j][1])
+                result_pred.append(False)
                 index_n.append(j+1)
             elif predicted_P[j] == 1:
                 print(str(chromosome) + 'PH : ' + str(j))
                 result_img.append(img)
+                result_prob.append(prob_p[j][1])
+                result_pred.append(True)
                 index_p.append(j+1)
         else:
             break
@@ -222,4 +239,5 @@ def predict_9(meta_img, model_n, model_p, all_contours, full_meta_img):
         print('cannot predict this metaphase')
         result = None
 
-    return result_img, result, frame_img
+    return result_img, result_prob, result_pred, result, frame_img
+

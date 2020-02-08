@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.models import User
 from django.db.models import Q
 from django.shortcuts import redirect
 
@@ -6,7 +7,7 @@ from django.shortcuts import redirect
 from django.utils import timezone
 from django.views.generic import ListView, DetailView, CreateView
 
-from verification.models import Case, Image
+from verification.models import Case, MetaphaseImage
 
 
 class CaseListView(LoginRequiredMixin, ListView):
@@ -50,7 +51,7 @@ class CaseDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(CaseDetailView, self).get_context_data(**kwargs)
-        context['images'] = Image.objects.filter(case=self.object).order_by('id')
+        context['images'] = MetaphaseImage.objects.filter(case=self.object).order_by('id')
         return context
 
     def post(self, request, *args, **kwargs):
@@ -64,16 +65,21 @@ class CaseDetailView(LoginRequiredMixin, DetailView):
         instance.confirm_user = request.user
         instance.save()
         return redirect('index')
-        # case = get_object_or_404(Case, pk=pk)
-        # images = Image.objects.filter(case=case).order_by('id')
-        # context = {'case': case, 'images': images}
-        # self.object = self.get_object()
-        # context = super(CaseDetailView, self).get_context_data(**kwargs)
-        # return self.render_to_response(context=context)
+
+
+def add_images(images_list, case_id, user_id):
+    case = Case.objects.get(id=case_id)
+    user = User.objects.get(id=user_id)
+
+    for file in images_list:
+        image = MetaphaseImage(case=case, original_image=file, upload_user=user)
+        image.save()
+        case.confirm_status = None
+        case.save()
 
 
 class UploadView(PermissionRequiredMixin, CreateView):
-    model = Image
+    model = MetaphaseImage
     permission_required = 'verification.add_image'
     fields = []
 
@@ -85,9 +91,5 @@ class UploadView(PermissionRequiredMixin, CreateView):
             case = Case(id=request.POST.get('case'), owner=user, upload_user=user)
             case.save()
 
-        for file in request.FILES.getlist('images'):
-            image = Image(case=case, original_image=file, upload_user=request.user)
-            image.save()
-            case.confirm_status = None
-            case.save()
+        add_images(request.FILES.getlist('images'), case.id, request.user.id)
         return redirect('index')
