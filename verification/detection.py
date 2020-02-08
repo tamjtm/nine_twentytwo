@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from keras.preprocessing import image
 from keras.preprocessing.image import img_to_array, array_to_img
+from PIL import Image, ImageDraw, ImageFont
 from skimage import measure
 from tensorflow_core.python.keras.models import model_from_json
 
@@ -120,27 +121,27 @@ def import_meta(filename):
 
 
 def framing(img, no, all_contours, chromosome):
-    min_h = int(min(all_contours[no][:, 0])) - 2
-    max_h = int(max(all_contours[no][:, 0])) + 2
-    min_w = int(min(all_contours[no][:, 1])) - 2
-    max_w = int(max(all_contours[no][:, 1])) + 2
+    min_h = int(min(all_contours[no][:,0]))-2
+    max_h = int(max(all_contours[no][:,0]))+2
+    min_w = int(min(all_contours[no][:,1]))-2
+    max_w = int(max(all_contours[no][:,1]))+2
     frame = []
-    for k in range(max_h - min_h + 1):
-        frame.append([min_h + k, min_w])
-        frame.append([min_h + k, max_w])
-    for k in range(max_w - min_w + 1):
-        frame.append([min_h, min_w + k])
-        frame.append([max_h, min_w + k])
+    for k in range(max_h - min_h+1):
+      frame.append([min_h+k,min_w])
+      frame.append([min_h+k,max_w])
+    for k in range(max_w - min_w+1):
+      frame.append([min_h,min_w+k])
+      frame.append([max_h,min_w+k])
+    temp_index = (min_w-10,min_h-21)
     for pixel in frame:
-        if chromosome == 9:
-            img[pixel[0] - 10, pixel[1] - 10] = [255, 0, 0]
-        else:
-            img[pixel[0] - 10, pixel[1] - 10] = [0, 0, 255]
+      if chromosome == 9:
+        img[pixel[0]-10,pixel[1]-10] = [255,0,0]
+      else:
+         img[pixel[0]-10,pixel[1]-10] = [0,0,255]
 
-    return img
+    return img,temp_index
 
 def temp_index_function (frame_img, temp_index, chro):
-  from PIL import Image, ImageDraw, ImageFont
   font = ImageFont.truetype('Roboto-Bold.ttf', size=10)
   draw = ImageDraw.Draw(frame_img)
   message = "ABCDEFGHi"
@@ -166,7 +167,7 @@ def predict_22(meta_img, model_find, model_classify, all_contours, full_meta_img
             img = array_to_img(meta_img[j])
 
             if find[j] == 1:  # chr 22
-                frame_img = framing(full_meta_img, j, all_contours, chromosome)
+                frame_img,temp_index = framing(full_meta_img, j, all_contours, chromosome)
 
                 if classify[j] == 1:  # phila 22
                     print(str(chromosome) + 'PH : ' + str(j))
@@ -193,7 +194,7 @@ def predict_22(meta_img, model_find, model_classify, all_contours, full_meta_img
         print('cannot predict this metaphase')
         result = None
 
-    return result_img, result_prob, result_pred, result, frame_img
+    return result_img, result_prob, result_pred, result, frame_img, temp_index
 
 
 def predict_9(meta_img, model_n, model_p, all_contours, full_meta_img):
@@ -213,7 +214,7 @@ def predict_9(meta_img, model_n, model_p, all_contours, full_meta_img):
             img = array_to_img(meta_img[j])
 
             if predicted_N[j] == 1 or predicted_P[j] == 1:
-                frame_img = framing(full_meta_img, j, all_contours, chromosome)
+                frame_img,temp_index = framing(full_meta_img, j, all_contours, chromosome)
 
             if predicted_N[j] == 1 and predicted_P[j] == 1:
                 print(str(chromosome) + 'chromosome: both model predict same result at index ' + str(j))
@@ -251,5 +252,5 @@ def predict_9(meta_img, model_n, model_p, all_contours, full_meta_img):
         print('cannot predict this metaphase')
         result = None
 
-    return result_img, result_prob, result_pred, result, frame_img
+    return result_img, result_prob, result_pred, result, frame_img, temp_index
 

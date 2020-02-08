@@ -96,13 +96,15 @@ class MetaphaseImage(models.Model):
 
         model_9n = load_922_model('models/9N')
         model_9p = load_922_model('models/9P')
-        img_9, prob_9, pred_9, result_9, framed = predict_9(ch_img[0], model_9n, model_9p, contours, meta_img)
+        img_9, prob_9, pred_9, result_9, framed, temp_index9 = predict_9(ch_img[0], model_9n, model_9p, contours, meta_img)
 
         model_22f = load_922_model('models/22Find')
         model_22c = load_922_model('models/22Classify')
-        img_22, prob_22, pred_22, result_22, framed = predict_22(ch_img[0], model_22f, model_22c, contours, framed)
+        img_22, prob_22, pred_22, result_22, framed, temp_index22 = predict_22(ch_img[0], model_22f, model_22c, contours, framed)
         framed = array_to_img(framed)
-
+        framed = temp_index_function(framed, temp_index9,9)
+        framed = temp_index_function(framed, temp_index22,22)
+    
         # if len(img_9) > 0 and len(img_22) > 0:
         temp = BytesIO()
         framed.save(temp, 'JPEG')
