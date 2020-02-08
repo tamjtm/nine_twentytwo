@@ -138,7 +138,19 @@ def framing(img, no, all_contours, chromosome):
             img[pixel[0] - 10, pixel[1] - 10] = [0, 0, 255]
 
     return img
-
+    
+def temp_index_function (frame_img, temp_index, chro):
+  from PIL import Image, ImageDraw, ImageFont
+  font = ImageFont.truetype('Roboto-Bold.ttf', size=10)
+  draw = ImageDraw.Draw(frame_img)
+  message = "ABCDEFGHI"
+  if chro == 9:
+    color = 'rgb(255, 0, 0)'
+  else:
+    color = 'rgb(0, 0, 255)'
+  for i,index in enumerate(temp_index):
+    draw.text(index, message[i], fill=color, font = font)
+  return frame_img
 
 def predict_22(meta_img, model_find, model_classify, all_contours, full_meta_img):
     chromosome = 22
