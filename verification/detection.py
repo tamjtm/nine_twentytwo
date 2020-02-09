@@ -11,12 +11,15 @@ from tensorflow_core.python.keras.models import model_from_json
 def load_922_model(directory):
     # load json and create model
     json_file = open(directory + '_model.json', 'r')
+    
     loaded_model_json = json_file.read()
+   
     json_file.close()
     loaded_model = model_from_json(loaded_model_json)
     # load weights into new model
-    loaded_model.load_weights(directory + "_weight.h5")
+    loaded_model.load_weights(directory + "_weight.h5") 
     return loaded_model
+
 
 
 def rotate_bound(image, angle):
@@ -160,7 +163,7 @@ def predict_22(meta_img, model_find, model_classify, all_contours, full_meta_img
     find = model_find.predict_classes(meta_img[:n])
     classify = model_classify.predict_classes(meta_img[:n])
     prob = model_classify.predict(meta_img[:n])
-
+    temp_index2 = []
     index_n, index_p, result_img, result_prob, result_pred = [], [], [], [], []
     for j in range(len(meta_img)):
         if j < n and len(result_img) < 4:
@@ -168,7 +171,7 @@ def predict_22(meta_img, model_find, model_classify, all_contours, full_meta_img
 
             if find[j] == 1:  # chr 22
                 frame_img,temp_index = framing(full_meta_img, j, all_contours, chromosome)
-
+                temp_index2.append(temp_index)
                 if classify[j] == 1:  # phila 22
                     print(str(chromosome) + 'PH : ' + str(j))
                     result_img.append(img)
@@ -183,6 +186,7 @@ def predict_22(meta_img, model_find, model_classify, all_contours, full_meta_img
                     index_n.append(j+1)
         else:
             break
+    
 
     if np.any(index_n) and not np.any(index_p):
         print('Not found abnormal chromosome %d' % chromosome)
@@ -194,7 +198,7 @@ def predict_22(meta_img, model_find, model_classify, all_contours, full_meta_img
         print('cannot predict this metaphase')
         result = None
 
-    return result_img, result_prob, result_pred, result, frame_img, temp_index
+    return result_img, result_prob, result_pred, result, frame_img, temp_index2
 
 
 def predict_9(meta_img, model_n, model_p, all_contours, full_meta_img):
@@ -207,7 +211,7 @@ def predict_9(meta_img, model_n, model_p, all_contours, full_meta_img):
     prob_p = model_p.predict(meta_img[:n])
 
     frame_img = full_meta_img
-
+    temp_index2 = []
     index_n, index_p, result_img, result_prob, result_pred = [], [], [], [], []
     for j in range(len(meta_img)):
         if j < n and len(result_img) < 4:
@@ -215,7 +219,7 @@ def predict_9(meta_img, model_n, model_p, all_contours, full_meta_img):
 
             if predicted_N[j] == 1 or predicted_P[j] == 1:
                 frame_img,temp_index = framing(full_meta_img, j, all_contours, chromosome)
-
+                temp_index2.append(temp_index)
             if predicted_N[j] == 1 and predicted_P[j] == 1:
                 print(str(chromosome) + 'chromosome: both model predict same result at index ' + str(j))
                 result_img.append(img)
@@ -252,5 +256,4 @@ def predict_9(meta_img, model_n, model_p, all_contours, full_meta_img):
         print('cannot predict this metaphase')
         result = None
 
-    return result_img, result_prob, result_pred, result, frame_img, temp_index
-
+    return result_img, result_prob, result_pred, result, frame_img, temp_index2
