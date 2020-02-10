@@ -11,15 +11,14 @@ from tensorflow_core.python.keras.models import model_from_json
 def load_922_model(directory):
     # load json and create model
     json_file = open(directory + '_model.json', 'r')
-    
+
     loaded_model_json = json_file.read()
-   
+
     json_file.close()
     loaded_model = model_from_json(loaded_model_json)
     # load weights into new model
-    loaded_model.load_weights(directory + "_weight.h5") 
+    loaded_model.load_weights(directory + "_weight.h5")
     return loaded_model
-
 
 
 def rotate_bound(image, angle):
@@ -124,37 +123,39 @@ def import_meta(filename):
 
 
 def framing(img, no, all_contours, chromosome):
-    min_h = int(min(all_contours[no][:,0]))-2
-    max_h = int(max(all_contours[no][:,0]))+2
-    min_w = int(min(all_contours[no][:,1]))-2
-    max_w = int(max(all_contours[no][:,1]))+2
+    min_h = int(min(all_contours[no][:, 0])) - 2
+    max_h = int(max(all_contours[no][:, 0])) + 2
+    min_w = int(min(all_contours[no][:, 1])) - 2
+    max_w = int(max(all_contours[no][:, 1])) + 2
     frame = []
-    for k in range(max_h - min_h+1):
-      frame.append([min_h+k,min_w])
-      frame.append([min_h+k,max_w])
-    for k in range(max_w - min_w+1):
-      frame.append([min_h,min_w+k])
-      frame.append([max_h,min_w+k])
-    temp_index = (min_w-10,min_h-21)
+    for k in range(max_h - min_h + 1):
+        frame.append([min_h + k, min_w])
+        frame.append([min_h + k, max_w])
+    for k in range(max_w - min_w + 1):
+        frame.append([min_h, min_w + k])
+        frame.append([max_h, min_w + k])
+    temp_index = (min_w - 10, min_h - 21)
     for pixel in frame:
-      if chromosome == 9:
-        img[pixel[0]-10,pixel[1]-10] = [255,0,0]
-      else:
-         img[pixel[0]-10,pixel[1]-10] = [0,0,255]
+        if chromosome == 9:
+            img[pixel[0] - 10, pixel[1] - 10] = [255, 0, 0]
+        else:
+            img[pixel[0] - 10, pixel[1] - 10] = [0, 0, 255]
 
-    return img,temp_index
+    return img, temp_index
 
-def temp_index_function (frame_img, temp_index, chro):
-  font = ImageFont.truetype('Roboto-Bold.ttf', size=10)
-  draw = ImageDraw.Draw(frame_img)
-  message = "ABCDEFGHi"
-  if chro == 9:
-    color = 'rgb(255, 0, 0)'
-  else:
-    color = 'rgb(0, 0, 255)'
-  for i,index in enumerate(temp_index):
-    draw.text(index, message[i], fill=color, font = font)
-  return frame_img
+
+def temp_index_function(frame_img, temp_index, chro):
+    font = ImageFont.truetype('Roboto-Bold.ttf', size=10)
+    draw = ImageDraw.Draw(frame_img)
+    message = "ABCDEFGHi"
+    if chro == 9:
+        color = 'rgb(255, 0, 0)'
+    else:
+        color = 'rgb(0, 0, 255)'
+    for i, index in enumerate(temp_index):
+        draw.text(index, str(chro) + message[i], fill=color, font=font)
+    return frame_img
+
 
 def predict_22(meta_img, model_find, model_classify, all_contours, full_meta_img):
     chromosome = 22
@@ -170,23 +171,22 @@ def predict_22(meta_img, model_find, model_classify, all_contours, full_meta_img
             img = array_to_img(meta_img[j])
 
             if find[j] == 1:  # chr 22
-                frame_img,temp_index = framing(full_meta_img, j, all_contours, chromosome)
+                frame_img, temp_index = framing(full_meta_img, j, all_contours, chromosome)
                 temp_index2.append(temp_index)
                 if classify[j] == 1:  # phila 22
                     print(str(chromosome) + 'PH : ' + str(j))
                     result_img.append(img)
                     result_prob.append(prob[j][1])
                     result_pred.append(True)
-                    index_p.append(j+1)
+                    index_p.append(j + 1)
                 else:  # normal 22
                     print(str(chromosome) + 'NM : ' + str(j))
                     result_img.append(img)
                     result_prob.append(prob[j][0])
                     result_pred.append(False)
-                    index_n.append(j+1)
+                    index_n.append(j + 1)
         else:
             break
-    
 
     if np.any(index_n) and not np.any(index_p):
         print('Not found abnormal chromosome %d' % chromosome)
@@ -218,17 +218,17 @@ def predict_9(meta_img, model_n, model_p, all_contours, full_meta_img):
             img = array_to_img(meta_img[j])
 
             if predicted_N[j] == 1 or predicted_P[j] == 1:
-                frame_img,temp_index = framing(full_meta_img, j, all_contours, chromosome)
+                frame_img, temp_index = framing(full_meta_img, j, all_contours, chromosome)
                 temp_index2.append(temp_index)
             if predicted_N[j] == 1 and predicted_P[j] == 1:
                 print(str(chromosome) + 'chromosome: both model predict same result at index ' + str(j))
                 result_img.append(img)
                 if prob_n[j][1] > prob_p[j][1]:
-                    index_n.append(j+1)
+                    index_n.append(j + 1)
                     result_prob.append(prob_n[j][1])
                     result_pred.append(False)
                 else:
-                    index_p.append(j+1)
+                    index_p.append(j + 1)
                     result_prob.append(prob_p[j][1])
                     result_pred.append(True)
             elif predicted_N[j] == 1:
@@ -236,13 +236,13 @@ def predict_9(meta_img, model_n, model_p, all_contours, full_meta_img):
                 result_img.append(img)
                 result_prob.append(prob_n[j][1])
                 result_pred.append(False)
-                index_n.append(j+1)
+                index_n.append(j + 1)
             elif predicted_P[j] == 1:
                 print(str(chromosome) + 'PH : ' + str(j))
                 result_img.append(img)
                 result_prob.append(prob_p[j][1])
                 result_pred.append(True)
-                index_p.append(j+1)
+                index_p.append(j + 1)
         else:
             break
 

@@ -1,5 +1,7 @@
 {% extends "base_generic.html" %}
 
+{% load crispy_forms_tags %}
+
 {% block title %}{{ case.id }}{% endblock %}
 
 {% block content %}
@@ -18,8 +20,11 @@
             {% endif %}
         </dd>
 
-        <dt class="col-sm-3 text-right">Owner :</dt>
+        <dt class="col-sm-3 text-right">Physician :</dt>
         <dd class="col-sm-9"><p>{{ case.owner }}</p></dd>
+
+        <dt class="col-sm-3 text-right">Differential Diagnosis :</dt>
+        <dd class="col-sm-9"><p>{% if case.diff_diagnosis %}{{ case.diff_diagnosis }}{% else %}-{% endif %}</p></dd>
 
         <dt class="col-sm-3 text-right">Uploaded by :</dt>
         <dd class="col-sm-9">
@@ -47,8 +52,14 @@
         <div class="card-body">
         {% if images %}
             {% if perms.verification.change_case or case.get_status != 'waiting' %}
+            {% if case.reject_message %}
+            <div class="alert alert-warning mt-3" role="alert">
+                {{ case.reject_message }}
+            </div>
+            {% endif %}
+
             <div id="carouselExampleIndicators" class="carousel slide mx-auto" data-interval="false">
-                <ol class="carousel-indicators" style="bottom: -30px;">
+                <ol class="carousel-indicators" style="bottom: -40px;">
                     {% for img in images %}
                         {% if forloop.counter == 1 %}
                         <li data-target="#carouselExampleIndicators" data-slide-to="{{ forloop.counter }}" class="active"></li>
@@ -117,12 +128,48 @@
                             <span class="sr-only">Next</span>
                         </a>
                 </div>
+
                 {% if perms.verification.change_case %}
-                <form method="post" class="mt-4 text-center">
+                <form method="post" class="mt-4 text-center" id="confirm-form">
                     {% csrf_token %}
                     <input type="hidden" name="id" value="{{ case.id }}">
                     <button type="submit" value="accept" name="result" class="btn btn-success">Accept</button>
-                    <button type="submit" value="reject" name="result" class="btn btn-danger">Reject</button>
+                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModal">Reject</button>
+                    <!--    Modal    -->
+                    <div class="modal fade" tabindex="-1" role="dialog" id="myModal">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <!--  Model Header  -->
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Rejection Message</h4>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <!--  Model Body  -->
+                                <div class="modal-body">
+                                    <div class="{% if form.non_field_errors %}invalid{% endif %} mb-2">
+                                        {% for error in form.non_field_errors %}
+                                        {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    <div class="form-group">
+                                        <textarea form="confirm-form" class="form-control align-top" name="message" rows="5"></textarea>
+
+                                        <div class="{% if field.errors %} invalid{% endif %}">
+                                            {% for error in field.errors %}
+                                            <p class="help-block">{{ error }}</p>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--  Model Footer  -->
+                                <div class="modal-footer">
+                                    <button type="submit" value="reject" name="result" class="btn btn-primary">Submit</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </form>
                 {% endif %}
             </div>
@@ -134,4 +181,7 @@
         {% endif %}
         </div>
     </div>
+
+<!--    <button type="submit" value="reject" name="result" class="btn btn-danger" data-toggle="modal" data-target="#myModal">Reject</button>-->
+
 {% endblock %}

@@ -1,12 +1,12 @@
+from random import randint
+
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Permission
+from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Q
 from django.shortcuts import redirect
-
-# Create your views here.
 from django.utils import timezone
-from django.views.generic import ListView, DetailView, CreateView
-
+from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from verification.models import Case, MetaphaseImage
 
 
@@ -54,13 +54,15 @@ class CaseDetailView(LoginRequiredMixin, DetailView):
         context['images'] = MetaphaseImage.objects.filter(case=self.object).order_by('id')
         return context
 
+    # confirmation
     def post(self, request, *args, **kwargs):
-        # if request.method == 'POST':
         instance = Case.objects.get(id=request.POST.get('id'))
         if request.POST.get('result') == "accept":
             instance.confirm_status = True
+            instance.reject_message = None
         elif request.POST.get('result') == "reject":
             instance.confirm_status = False
+            instance.reject_message = request.POST.get('message')
         instance.confirm_time = timezone.now()
         instance.confirm_user = request.user
         instance.save()
@@ -79,17 +81,30 @@ def add_images(images_list, case_id, user_id):
 
 
 class UploadView(PermissionRequiredMixin, CreateView):
-    model = MetaphaseImage
+    model = Case
     permission_required = 'verification.add_image'
-    fields = []
+    fields = ['diff_diagnosis']
 
     def post(self, request, *args, **kwargs):
         try:
             case = Case.objects.get(id=request.POST.get('case'))
         except Case.DoesNotExist:
             user = request.user
-            case = Case(id=request.POST.get('case'), owner=user, upload_user=user)
+            perm_doctor = Permission.objects.get(codename='view_case')
+            perm_meditech = Permission.objects.get(codename='change_case')
+            owner_list = User.objects.filter(
+                Q(user_permissions=perm_doctor) & ~Q(user_permissions=perm_meditech)
+            )
+            count = owner_list.count()
+            if count > 0:
+                random_index = randint(0, count-1)
+                owner = owner_list[random_index]
+            else:
+                owner = request.user
+            case = Case(id=request.POST.get('case'), owner=owner,
+                        diff_diagnosis=request.POST.get('diff_diagnosis'), upload_user=user)
             case.save()
 
         add_images(request.FILES.getlist('images'), case.id, request.user.id)
         return redirect('index')
+

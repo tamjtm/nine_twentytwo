@@ -17,12 +17,14 @@ from verification.detection import *
 
 class Case(models.Model):
     id = models.CharField(primary_key=True, max_length=20)
-    owner = models.ForeignKey(User, related_name='own', on_delete=models.SET_NULL, null=True)
+    owner = models.ForeignKey(User, verbose_name="Physician", related_name='own', on_delete=models.SET_NULL, null=True)
+    diff_diagnosis = models.CharField(max_length=100, verbose_name="Differential Diagnosis", null=True, blank=True)
     upload_user = models.ForeignKey(User, related_name='upload', on_delete=models.SET_NULL, null=True)
     upload_time = models.DateTimeField(auto_now_add=True)
     confirm_user = models.ForeignKey(User, related_name='confirm', on_delete=models.SET_NULL, null=True, blank=True)
     confirm_time = models.DateTimeField(null=True, blank=True)
     confirm_status = models.BooleanField(null=True, blank=True)
+    reject_message = models.CharField(max_length=200, null=True, blank=True)
 
     class Meta:
         ordering = ('id', 'upload_time', )
@@ -96,7 +98,7 @@ class MetaphaseImage(models.Model):
 
         model_9n = load_922_model('models/9N')
         model_9p = load_922_model('models/9P')
-        img_9, prob_9, pred_9, result_9, framed, temp_index9 = predict_9(ch_img[0], model_9n, model_9p, contours, meta_img)
+        img_9, prob_9, pred_9, result_9, framed, temp_index9= predict_9(ch_img[0], model_9n, model_9p, contours, meta_img)
 
         model_22f = load_922_model('models/22Find')
         model_22c = load_922_model('models/22Classify')
@@ -104,7 +106,7 @@ class MetaphaseImage(models.Model):
         framed = array_to_img(framed)
         framed = temp_index_function(framed, temp_index9,9)
         framed = temp_index_function(framed, temp_index22,22)
-    
+
         # if len(img_9) > 0 and len(img_22) > 0:
         temp = BytesIO()
         framed.save(temp, 'JPEG')
