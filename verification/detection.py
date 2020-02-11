@@ -147,7 +147,7 @@ def framing(img, no, all_contours, chromosome):
 def temp_index_function(frame_img, temp_index, chro):
     font = ImageFont.truetype('Roboto-Bold.ttf', size=10)
     draw = ImageDraw.Draw(frame_img)
-    message = "ABCDEFGHi"
+    message = "ABCDEFGHI"
     if chro == 9:
         color = 'rgb(255, 0, 0)'
     else:
