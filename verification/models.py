@@ -1,10 +1,8 @@
 import sys
 from io import BytesIO
 
-from celery import task
 from django.contrib.auth.models import User
 from django.core.files import File
-from django.core.files.base import ContentFile
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
 
@@ -50,12 +48,13 @@ class Case(models.Model):
             elif img.result == 0:
                 neg_count += 1
             all_count += 1
+        print(pos_count, neg_count)
         if pos_count > 0:
-            return 'Positive %.2f%%' % (pos_count/all_count*100)
+            return True
         elif neg_count > 0:
-            return 'Negative %.2f%%' % (neg_count/all_count*100)
+            return False
         else:
-            return 'cannot detect'
+            return None
 
 
 @deconstructible

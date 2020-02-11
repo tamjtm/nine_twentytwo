@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from keras.preprocessing import image
 from keras.preprocessing.image import img_to_array, array_to_img
-from PIL import Image, ImageDraw, ImageFont
+from PIL import ImageDraw, ImageFont
 from skimage import measure
 from tensorflow_core.python.keras.models import model_from_json
 
@@ -147,7 +147,7 @@ def framing(img, no, all_contours, chromosome):
 def temp_index_function(frame_img, temp_index, chro):
     font = ImageFont.truetype('Roboto-Bold.ttf', size=10)
     draw = ImageDraw.Draw(frame_img)
-    message = "ABCDEFGHi"
+    message = "ABCDEFGHI"
     if chro == 9:
         color = 'rgb(255, 0, 0)'
     else:
@@ -164,6 +164,7 @@ def predict_22(meta_img, model_find, model_classify, all_contours, full_meta_img
     find = model_find.predict_classes(meta_img[:n])
     classify = model_classify.predict_classes(meta_img[:n])
     prob = model_classify.predict(meta_img[:n])
+
     temp_index2 = []
     index_n, index_p, result_img, result_prob, result_pred = [], [], [], [], []
     for j in range(len(meta_img)):
