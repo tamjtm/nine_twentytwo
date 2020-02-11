@@ -160,7 +160,7 @@ def temp_index_function(frame_img, temp_index, chro):
 def predict_22(meta_img, model_find, model_classify, all_contours, full_meta_img):
     chromosome = 22
     n = 5
-
+    frame_img = full_meta_img
     find = model_find.predict_classes(meta_img[:n])
     classify = model_classify.predict_classes(meta_img[:n])
     prob = model_classify.predict(meta_img[:n])
