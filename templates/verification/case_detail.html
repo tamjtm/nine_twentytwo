@@ -5,37 +5,27 @@
 {% block title %}{{ case.id }}{% endblock %}
 
 {% block content %}
-    <h1 class="mt-2">Case Detail</h1>
+    <h2 class="mt-2">{{ case.id }}</h2>
     <hr class="mt-0 mb-4">
+
     <dl class="row">
-        <dt class="col-sm-3 text-right">Case ID :</dt>
-        <dd class="col-sm-3"><p>{{ case.id }}</p></dd>
-        <dd class="col-sm-6 text-right">
-            {% if 'Positive' in case.get_result %}
-                <h3 class="mr-4"><span class="badge badge-danger">{{ case.get_result }}</span></h3>
-            {% elif 'Negative' in case.get_result %}
-                <h3 class="mr-4"><span class="badge badge-success">{{ case.get_result }}</span></h3>
-            {% else %}
-                <h3 class="mr-4"><span class="badge badge-warning">{{ case.get_result }}</span></h3>
-            {% endif %}
-        </dd>
+        <dt class="col-sm-2 text-right">Physician :</dt>
+        <dd class="col-sm-4"><p>{{ case.owner }}</p></dd>
 
-        <dt class="col-sm-3 text-right">Physician :</dt>
-        <dd class="col-sm-9"><p>{{ case.owner }}</p></dd>
-
-        <dt class="col-sm-3 text-right">Differential Diagnosis :</dt>
-        <dd class="col-sm-9"><p>{% if case.diff_diagnosis %}{{ case.diff_diagnosis }}{% else %}-{% endif %}</p></dd>
-
-        <dt class="col-sm-3 text-right">Uploaded by :</dt>
-        <dd class="col-sm-9">
+        <dt class="col-sm-2 text-right">Uploaded by :</dt>
+        <dd class="col-sm-4">
             <ul class="list-inline">
                 <li class="list-inline-item">{{ case.upload_user }}</li>
                 <li class="list-inline-item text-muted">({{ case.upload_time }})</li>
             </ul>
         </dd>
 
-        <dt class="col-sm-3 text-right">Verified by :</dt>
-        <dd class="col-sm-9">
+        <dt class="col-sm-2 text-right">Differential Diagnosis :</dt>
+        <dd class="col-sm-4"><p>{% if case.diff_diagnosis %}{{ case.diff_diagnosis }}{% else %}-{% endif %}</p></dd>
+
+
+        <dt class="col-sm-2 text-right">Verified by :</dt>
+        <dd class="col-sm-4">
             {% if case.get_status != 'waiting' %}
             <ul class="list-inline">
                 <li class="list-inline-item">{{ case.confirm_user }}</li>
@@ -46,18 +36,32 @@
             {% endif %}
         </dd>
     </dl>
+    <!--  Interpretation For Case  -->
+    {% if perms.verification.change_case or case.get_status == 'accepted' %}
+        <center>
+        {% if case.get_result == 0 %}
+            <h3 class="mr-4"><span class="badge badge-danger">No Philadelphia Abnormality is detected</span></h3>
+        {% elif case.get_result == 1 %}
+            <h3 class="mr-4"><span class="badge badge-success">Philadelphia Abnormality is possible</span></h3>
+        {% else %}
+            <h3 class="mr-4"><span class="badge badge-warning">This metaphase image can't be detected</span></h3>
+        {% endif %}
+        </center>
+    {% endif %}
 
+    <!-- Rejection Message -->
+    {% if perms.verification.change_case or case.get_status != 'waiting' %}
+    {% if case.reject_message %}
+    <center>
+    <div class="alert alert-danger mt-3 w-75" role="alert">
+        {{ case.reject_message }}
+    </div>
+    </center>
+    {% endif %}
     <div class="card border-info" style="width: 650px:;">
         <h5 class="card-header text-white bg-info">Metaphase Images</h5>
         <div class="card-body">
         {% if images %}
-            {% if perms.verification.change_case or case.get_status != 'waiting' %}
-            {% if case.reject_message %}
-            <div class="alert alert-warning mt-3" role="alert">
-                {{ case.reject_message }}
-            </div>
-            {% endif %}
-
             <div id="carouselExampleIndicators" class="carousel slide mx-auto" data-interval="false">
                 <ol class="carousel-indicators" style="bottom: -40px;">
                     {% for img in images %}
@@ -77,8 +81,8 @@
                         {% endif %}
                             <center>
                             <h5 class="p-1 mb-1 text-info text-uppercase">{{ img }}</h5>
-                                <h4><span class="badge badge-light">{{ img.get_result }}</span></h4>
-                                {% if img.result_image %}
+<!--                                <h4><span class="badge badge-light">{{ img.get_result }}</span></h4>-->
+                                {% if img.result_image and perms.verification.change_case or case.get_status == 'accepted' %}
                                     <img class="d-block w-75" src="{{ img.result_image.url }}">
                                     <div class="card mt-1 d-inline-flex border-dark">
                                         <strong class="card-header p-1 text-center text-white bg-dark">Chromosome 9</strong>
@@ -173,13 +177,22 @@
                 </form>
                 {% endif %}
             </div>
-            {% else %}
-                <p>These results have not been verified by medical technician.</p>
-            {% endif %}
+
         {% else %}
-            <p>There are no images for this case.</p>
+            <center>
+            <div class="alert alert-dark mt-3 w-75" role="alert">
+                There are no metaphase images for this case.
+            </div>
+            </center>
         {% endif %}
         </div>
+    {% else %}
+        <center>
+        <div class="alert alert-warning mt-3 w-75" role="alert">
+            Detection results have not been verified by medical technician.
+        </div>
+        </center>
+    {% endif %}
     </div>
 
 <!--    <button type="submit" value="reject" name="result" class="btn btn-danger" data-toggle="modal" data-target="#myModal">Reject</button>-->

@@ -5,6 +5,7 @@ from django.contrib.auth.models import User, Permission
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Q
 from django.shortcuts import redirect
+from django.urls import reverse
 from django.utils import timezone
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from verification.models import Case, MetaphaseImage
@@ -106,5 +107,4 @@ class UploadView(PermissionRequiredMixin, CreateView):
             case.save()
 
         add_images(request.FILES.getlist('images'), case.id, request.user.id)
-        return redirect('index')
-
+        return redirect('case-detail', pk=case.id)

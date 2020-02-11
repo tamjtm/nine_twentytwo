@@ -43,19 +43,19 @@ class Case(models.Model):
 
     @property
     def get_result(self):
-        all_count = pos_count = neg_count = 0
+        bPh = None
         for img in MetaphaseImage.objects.filter(case=self).select_related():
             if img.result == 1:
-                pos_count += 1
+                bPh = True
             elif img.result == 0:
-                neg_count += 1
-            all_count += 1
-        if pos_count > 0:
-            return 'Positive %.2f%%' % (pos_count/all_count*100)
-        elif neg_count > 0:
-            return 'Negative %.2f%%' % (neg_count/all_count*100)
+                bPh = False
+        if bPh is not None:
+            if bPh:
+                return 1
+            else:
+                return 0
         else:
-            return 'cannot detect'
+            return None
 
 
 @deconstructible
