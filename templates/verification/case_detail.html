@@ -5,194 +5,201 @@
 {% block title %}{{ case.id }}{% endblock %}
 
 {% block content %}
-    <h2 class="mt-2">{{ case.id }}</h2>
-    <hr class="mt-0 mb-4">
+    <div class="row mx-2 mt-2">
+        <div class="col-3">
+            <div class="card border-info mt-3">
+                <h2 class="card-header text-white bg-info">{{ case.id }}</h2>
+                <div class="card-body">
+                    <p><strong>Physician: </strong>{{ case.owner }}</p>
 
-    <dl class="row">
-        <dt class="col-sm-2 text-right">Physician :</dt>
-        <dd class="col-sm-4"><p>{{ case.owner }}</p></dd>
+                    <p><strong>Differential Diagnosis: </strong>{% if case.diff_diagnosis %}{{ case.diff_diagnosis }}{% else %}-{% endif %}</p>
 
-        <dt class="col-sm-2 text-right">Uploaded by :</dt>
-        <dd class="col-sm-4">
-            <ul class="list-inline">
-                <li class="list-inline-item">{{ case.upload_user }}</li>
-                <li class="list-inline-item text-muted">({{ case.upload_time }})</li>
-            </ul>
-        </dd>
+                    <strong>Uploaded by: </strong>
+                    <ul class="list-inline">
+                        <li class="list-inline-item">{{ case.upload_user }}</li>
+                        <li class="list-inline-item text-muted">({{ case.upload_time }})</li>
+                    </ul>
 
-        <dt class="col-sm-2 text-right">Differential Diagnosis :</dt>
-        <dd class="col-sm-4"><p>{% if case.diff_diagnosis %}{{ case.diff_diagnosis }}{% else %}-{% endif %}</p></dd>
-
-
-        <dt class="col-sm-2 text-right">Verified by :</dt>
-        <dd class="col-sm-4">
-            {% if case.get_status != 'waiting' %}
-            <ul class="list-inline">
-                <li class="list-inline-item">{{ case.confirm_user }}</li>
-                <li class="list-inline-item text-muted">({{ case.confirm_time }})</li>
-            </ul>
-            {% else %}
-                -
-            {% endif %}
-        </dd>
-    </dl>
-    <!--  Interpretation For Case  -->
-    {% if perms.verification.change_case or case.get_status == 'accepted' %}
-        <center>
-        {% if case.get_result == 0 %}
-            <h3 class="mr-4"><span class="badge badge-danger">No Philadelphia Abnormality is detected</span></h3>
-        {% elif case.get_result == 1 %}
-            <h3 class="mr-4"><span class="badge badge-success">Philadelphia Abnormality is possible</span></h3>
-        {% else %}
-            <h3 class="mr-4"><span class="badge badge-warning">This metaphase image can't be detected</span></h3>
-        {% endif %}
-        </center>
-    {% endif %}
-
-    <!-- Rejection Message -->
-    {% if perms.verification.change_case or case.get_status != 'waiting' %}
-    {% if case.reject_message %}
-    <center>
-    <div class="alert alert-danger mt-3 w-75" role="alert">
-        {{ case.reject_message }}
-    </div>
-    </center>
-    {% endif %}
-    <div class="card border-info" style="width: 650px:;">
-        <h5 class="card-header text-white bg-info">Metaphase Images</h5>
-        <div class="card-body">
-        {% if images %}
-            <div id="carouselExampleIndicators" class="carousel slide mx-auto" data-interval="false">
-                <ol class="carousel-indicators" style="bottom: -40px;">
-                    {% for img in images %}
-                        {% if forloop.counter == 1 %}
-                        <li data-target="#carouselExampleIndicators" data-slide-to="{{ forloop.counter }}" class="active"></li>
-                        {% else %}
-                        <li data-target="#carouselExampleIndicators" data-slide-to="{{ forloop.counter }}"></li>
+                    <strong>Verified by: </strong>
+                    {% if case.get_status != 'waiting' %}
+                    <ul class="list-inline">
+                        <li class="list-inline-item">{{ case.confirm_user }}</li>
+                        <li class="list-inline-item text-muted">({{ case.confirm_time }})</li>
+                    </ul>
+                    {% else %}
+                    <p>-</p>
+                    {% endif %}
+                    <hr class="mt-5 mb-5">
+                    <div class="mt-3">
+                        <strong>Result: </strong>
+                        <!--  Interpretation For Case  -->
+                        {% if perms.verification.change_case or case.get_status == 'accepted' %}
+                            {% if case.get_result == 0 %}
+                                <h5 class="text-success">No Philadelphia Abnormality is detected</h5>
+                            {% elif case.get_result == 1 %}
+                                <h5 class="text-danger">Philadelphia Abnormality is possible</h5>
+                            {% else %}
+                                <h5 class="text-warning">This metaphase image can't be detected</h5>
+                            {% endif %}
                         {% endif %}
-                    {% endfor %}
-                </ol>
-                <div class="carousel-inner">
-                    {% for img in images %}
-                        {% if forloop.counter == 1 %}
-                        <div class="carousel-item active">
-                        {% else %}
-                        <div class="carousel-item">
-                        {% endif %}
-                            <center>
-                            <h5 class="p-1 mb-1 text-info text-uppercase">{{ img }}</h5>
-<!--                                <h4><span class="badge badge-light">{{ img.get_result }}</span></h4>-->
-                                {% if img.result_image and perms.verification.change_case or case.get_status == 'accepted' %}
-                                    <img class="d-block w-75" src="{{ img.result_image.url }}">
-                                    <div class="card mt-1 d-inline-flex border-dark">
-                                        <strong class="card-header p-1 text-center text-white bg-dark">Chromosome 9</strong>
-                                        <div class="card-body d-inline-flex justify-content-center">
-                                            {% if img.get_chromosome9 %}
-                                                {% for ch in img.get_chromosome9 %}
-                                                    <div class="d-flex flex-column">
-                                                        <strong style="color: red;">{{ ch.name }}</strong>
-                                                        <img src="{{ ch.image.url }}">
-                                                        <small>{{ ch.get_prediction }}-{{ ch.prob | floatformat:2 }}</small>
-                                                    </div>
-                                                {% endfor %}
-                                            {% else %}
-                                                <div class="d-flex flex-column">None</div>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                    <div class="card mt-1 d-inline-flex border-dark">
-                                        <strong class="card-header p-1 text-center text-white bg-dark">Chromosome 22</strong>
-                                        <div class="card-body d-inline-flex justify-content-center">
-                                            {% if img.get_chromosome22 %}
-                                                {% for ch in img.get_chromosome22 %}
-                                                    <div class="d-flex flex-column">
-                                                        <strong style="color: blue;">{{ ch.name }}</strong>
-                                                        <img src="{{ ch.image.url }}">
-                                                        <small>{{ ch.get_prediction }}-{{ ch.prob | floatformat:2}}</small>
-                                                    </div>
-                                                {% endfor %}
-                                            {% else %}
-                                                <div class="d-flex flex-column">None</div>>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                {% else %}
-                                    <img class="d-block w-75" src="{{ img.original_image.url }}">
-                                {% endif %}
-                            </center>
-                        </div>
-                        {% endfor %}
-                        </div>
-                        <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev" style="filter: invert(100%);">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="sr-only">Previous</span>
-                        </a>
-                        <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next" style="filter: invert(100%);">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="sr-only">Next</span>
-                        </a>
-                </div>
+                    </div>
 
-                {% if perms.verification.change_case %}
-                <form method="post" class="mt-4 text-center" id="confirm-form">
-                    {% csrf_token %}
-                    <input type="hidden" name="id" value="{{ case.id }}">
-                    <button type="submit" value="accept" name="result" class="btn btn-success">Accept</button>
-                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModal">Reject</button>
-                    <!--    Modal    -->
-                    <div class="modal fade" tabindex="-1" role="dialog" id="myModal">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <!--  Model Header  -->
-                                <div class="modal-header">
-                                    <h4 class="modal-title">Rejection Message</h4>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <!--  Model Body  -->
-                                <div class="modal-body">
-                                    <div class="{% if form.non_field_errors %}invalid{% endif %} mb-2">
-                                        {% for error in form.non_field_errors %}
-                                        {{ error }}
-                                        {% endfor %}
-                                    </div>
-                                    <div class="form-group">
-                                        <textarea form="confirm-form" class="form-control align-top" name="message" rows="5"></textarea>
+                    <!--  Verification Button (Accept&Reject)  -->
+                    {% if perms.verification.change_case %}
+                    <form method="post" class="mt-4 text-center" id="confirm-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="id" value="{{ case.id }}">
+                        <button type="submit" value="accept" name="result" class="btn btn-success">Accept</button>
+                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModal">Reject</button>
 
-                                        <div class="{% if field.errors %} invalid{% endif %}">
-                                            {% for error in field.errors %}
-                                            <p class="help-block">{{ error }}</p>
+                        <!--    Modal    -->
+                        <div class="modal fade" tabindex="-1" role="dialog" id="myModal">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <!--  Model Header  -->
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Rejection Message</h4>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <!--  Model Body  -->
+                                    <div class="modal-body">
+                                        <div class="{% if form.non_field_errors %}invalid{% endif %} mb-2">
+                                            {% for error in form.non_field_errors %}
+                                            {{ error }}
                                             {% endfor %}
                                         </div>
+                                        <div class="form-group">
+                                            <textarea form="confirm-form" class="form-control align-top" name="message" rows="5"></textarea>
+
+                                            <div class="{% if field.errors %} invalid{% endif %}">
+                                                {% for error in field.errors %}
+                                                <p class="help-block">{{ error }}</p>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <!--  Model Footer  -->
-                                <div class="modal-footer">
-                                    <button type="submit" value="reject" name="result" class="btn btn-primary">Submit</button>
+                                    <!--  Model Footer  -->
+                                    <div class="modal-footer">
+                                        <button type="submit" value="reject" name="result" class="btn btn-primary">Submit</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </form>
-                {% endif %}
+                    </form>
+                    {% endif %}
+                </div>
             </div>
-
-        {% else %}
+        </div>
+        <div class="col-9">
+            <!-- Rejection Message -->
+            {% if perms.verification.change_case or case.get_status != 'waiting' %}
+            {% if case.reject_message %}
             <center>
-            <div class="alert alert-dark mt-3 w-75" role="alert">
-                There are no metaphase images for this case.
+            <div class="alert alert-danger mt-3 w-75" role="alert">
+                {{ case.reject_message }}
             </div>
             </center>
-        {% endif %}
+            {% endif %}
+
+            <!--  Metaphase Images  -->
+
+
+                {% if images %}
+                    <div id="carouselExampleIndicators" class="carousel slide mx-auto" data-interval="false">
+<!--                        <ol class="carousel-indicators" style="bottom: -40px;">-->
+<!--                            {% for img in images %}-->
+<!--                                {% if forloop.counter == 1 %}-->
+<!--                                <li data-target="#carouselExampleIndicators" data-slide-to="{{ forloop.counter }}" class="active"></li>-->
+<!--                                {% else %}-->
+<!--                                <li data-target="#carouselExampleIndicators" data-slide-to="{{ forloop.counter }}"></li>-->
+<!--                                {% endif %}-->
+<!--                            {% endfor %}-->
+<!--                        </ol>-->
+                        <div class="carousel-inner mt-4">
+                            {% for img in images %}
+                                {% if forloop.counter == 1 %}
+                                <div class="carousel-item active">
+                                {% else %}
+                                <div class="carousel-item">
+                                {% endif %}
+                                    <h5 class="p-1 mb-1 text-dark text-uppercase text-center">{{ img }}</h5>
+        <!--                                <h4><span class="badge badge-light">{{ img.get_result }}</span></h4>-->
+                                        {% if img.result_image and perms.verification.change_case or case.get_status == 'accepted' %}
+                                            <div class="row">
+                                                <div class="col-7 text-center">
+                                                    <img class="d-block w-100" src="{{ img.result_image.url }}">
+                                                </div>
+                                                <div class="col-5">
+                                                    <div class="card mt-1 d-flex border-dark text-center">
+                                                        <strong class="card-header p-1 text-center text-white bg-dark">Chromosome 9</strong>
+                                                        <div class="card-body d-inline-flex justify-content-center">
+                                                            {% if img.get_chromosome9 %}
+                                                                {% for ch in img.get_chromosome9 %}
+                                                                    <div class="d-flex flex-column">
+                                                                        <strong style="color: red;">{{ ch.name }}</strong>
+                                                                        <img src="{{ ch.image.url }}">
+                                                                        <small>{{ ch.get_prediction }}-{{ ch.prob | floatformat:2 }}</small>
+                                                                    </div>
+                                                                {% endfor %}
+                                                            {% else %}
+                                                                <div class="d-flex flex-column">None</div>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                    <div class="card mt-1 d-flex border-dark text-center">
+                                                        <strong class="card-header p-1 text-center text-white bg-dark">Chromosome 22</strong>
+                                                        <div class="card-body d-inline-flex justify-content-center">
+                                                            {% if img.get_chromosome22 %}
+                                                                {% for ch in img.get_chromosome22 %}
+                                                                    <div class="d-flex flex-column">
+                                                                        <strong style="color: blue;">{{ ch.name }}</strong>
+                                                                        <img src="{{ ch.image.url }}">
+                                                                        <small>{{ ch.get_prediction }}-{{ ch.prob | floatformat:2}}</small>
+                                                                    </div>
+                                                                {% endfor %}
+                                                            {% else %}
+                                                                <div class="d-flex flex-column">None</div>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        {% else %}
+                                            <img class="d-block w-75" src="{{ img.original_image.url }}">
+                                        {% endif %}
+                                </div>
+                                {% endfor %}
+                                </div>
+
+                        </div>
+<!--                        <center class="mt-4">-->
+<!--                            <a href="#carouselExampleIndicators" class="btn btn-dark btn-sm" role="button" data-slide="prev">-->
+<!--                                Previous-->
+<!--                            </a>-->
+<!--                            <a href="#carouselExampleIndicators" class="btn btn-dark btn-sm" role="button" data-slide="next">-->
+<!--                                Next-->
+<!--                            </a>-->
+<!--                        </center>-->
+                    </div>
+                {% else %}
+                    <center>
+                    <div class="alert alert-dark mt-3 w-75" role="alert">
+                        There are no metaphase images for this case.
+                    </div>
+                    </center>
+                {% endif %}
+            {% else %}
+                <center>
+                <div class="alert alert-warning mt-3 w-75" role="alert">
+                    Detection results have not been verified by medical technician.
+                </div>
+                </center>
+            {% endif %}
+
         </div>
-    {% else %}
-        <center>
-        <div class="alert alert-warning mt-3 w-75" role="alert">
-            Detection results have not been verified by medical technician.
-        </div>
-        </center>
-    {% endif %}
     </div>
 
 <!--    <button type="submit" value="reject" name="result" class="btn btn-danger" data-toggle="modal" data-target="#myModal">Reject</button>-->

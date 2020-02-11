@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <style type="text/css">
+        .page-holder {
+          min-height: 100vh;
+        }
+
+        .bg-cover {
+          background-size: cover !important;
+        }
+
         .carousel .carousel-indicators li {
           background-color: #fff;
           background-color: rgba(70, 70, 70, 0.25);
@@ -16,6 +24,10 @@
 
         .form-group>label{
             font-weight: bold;
+        }
+
+        #progressbar {
+          display: none;
         }
     </style>
 
@@ -30,6 +42,8 @@
     <title>{% block title %}Authentication{% endblock %}</title>
 </head>
 <body>
+<!--    <div style="background: url(https://images.unsplash.com/photo-1518152006812-edab29b069ac?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1500&q=80)" class="page-holder bg-cover">-->
+
     {% block navbar %}
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         {% if user.is_authenticated %}
@@ -40,7 +54,10 @@
 
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-                {% if perms.verification.add_image %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'index' %}">Home</a>
+                </li>
+                {% if perms.verification.add_metaphaseimage %}
                 <li class="nav-item">
                     <a class="nav-link" href="/upload">Upload</a>
                 </li>
@@ -70,11 +87,11 @@
     {% endblock %}
 
     <div id="content" class="main">
-        <div class="row justify-content-center">
-            <div class="col-8">
+<!--        <div class="row justify-content-center">-->
+<!--            <div class="col-8">-->
                 {% block content %}{% endblock %}
-            </div>
-        </div>
+<!--            </div>-->
+<!--        </div>-->
     </div>
 </body>
 </html>

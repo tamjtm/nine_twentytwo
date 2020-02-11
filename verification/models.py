@@ -1,10 +1,8 @@
 import sys
 from io import BytesIO
 
-from celery import task
 from django.contrib.auth.models import User
 from django.core.files import File
-from django.core.files.base import ContentFile
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
 
@@ -43,17 +41,18 @@ class Case(models.Model):
 
     @property
     def get_result(self):
-        bPh = None
+        all_count = pos_count = neg_count = 0
         for img in MetaphaseImage.objects.filter(case=self).select_related():
             if img.result == 1:
-                bPh = True
+                pos_count += 1
             elif img.result == 0:
-                bPh = False
-        if bPh is not None:
-            if bPh:
-                return 1
-            else:
-                return 0
+                neg_count += 1
+            all_count += 1
+        print(pos_count, neg_count)
+        if pos_count > 0:
+            return True
+        elif neg_count > 0:
+            return False
         else:
             return None
 

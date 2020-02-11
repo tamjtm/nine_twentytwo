@@ -1,13 +1,12 @@
 from random import randint
 
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.contrib.auth.models import User, Permission
-from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib.auth.models import User
 from django.db.models import Q
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils import timezone
-from django.views.generic import ListView, DetailView, CreateView, UpdateView
+from django.views.generic import ListView, DetailView, CreateView
 from verification.models import Case, MetaphaseImage
 
 
@@ -83,7 +82,7 @@ def add_images(images_list, case_id, user_id):
 
 class UploadView(PermissionRequiredMixin, CreateView):
     model = Case
-    permission_required = 'verification.add_image'
+    permission_required = 'verification.add_metaphaseimage'
     fields = ['diff_diagnosis']
 
     def post(self, request, *args, **kwargs):
@@ -91,11 +90,12 @@ class UploadView(PermissionRequiredMixin, CreateView):
             case = Case.objects.get(id=request.POST.get('case'))
         except Case.DoesNotExist:
             user = request.user
-            perm_doctor = Permission.objects.get(codename='view_case')
-            perm_meditech = Permission.objects.get(codename='change_case')
-            owner_list = User.objects.filter(
-                Q(user_permissions=perm_doctor) & ~Q(user_permissions=perm_meditech)
-            )
+            # perm_doctor = Permission.objects.get(codename='view_case')
+            # perm_meditech = Permission.objects.get(codename='change_case')
+            # owner_list = User.objects.filter(
+            #     Q(user_permissions=perm_doctor) & ~Q(user_permissions=perm_meditech)
+            # )
+            owner_list = User.objects.filter(groups__name='Doctor')
             count = owner_list.count()
             if count > 0:
                 random_index = randint(0, count-1)
