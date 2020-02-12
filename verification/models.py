@@ -130,7 +130,7 @@ class MetaphaseImage(models.Model):
             if result_9 + result_22 == 0:
                 print(">>> Negative")
                 return 0
-            elif result_9 + result_22 == 2:
+            else:
                 print(">>> Positive")
                 return 1
         print(">>> Cannot detect")

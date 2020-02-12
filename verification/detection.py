@@ -228,14 +228,9 @@ def predict_9(meta_img, model_n, model_p, all_contours, full_meta_img):
             if predicted_N[j] == 1 and predicted_P[j] == 1:
                 print(str(chromosome) + 'chromosome: both model predict same result at index ' + str(j))
                 result_img.append(img)
-                if prob_n[j][1] > prob_p[j][1]:
-                    index_n.append(j + 1)
-                    result_prob.append(prob_n[j][1])
-                    result_pred.append(False)
-                else:
-                    index_p.append(j + 1)
-                    result_prob.append(prob_p[j][1])
-                    result_pred.append(True)
+                index_p.append(j + 1)
+                result_prob.append(prob_p[j][1])
+                result_pred.append(True)
             elif predicted_N[j] == 1:
                 print(str(chromosome) + 'NM : ' + str(j))
                 result_img.append(img)
@@ -254,7 +249,7 @@ def predict_9(meta_img, model_n, model_p, all_contours, full_meta_img):
     if np.any(index_n) and not np.any(index_p):
         print('Not found abnormal chromosome %d' % chromosome)
         result = 0
-    elif np.any(index_p) and np.any(index_n):
+    elif np.any(index_p):
         print('Found abnormal chromosome %d' % chromosome)
         result = 1
     else:
