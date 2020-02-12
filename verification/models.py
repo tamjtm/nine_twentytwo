@@ -48,7 +48,6 @@ class Case(models.Model):
             elif img.result == 0:
                 neg_count += 1
             all_count += 1
-        print(pos_count, neg_count)
         if pos_count > 0:
             return True
         elif neg_count > 0:

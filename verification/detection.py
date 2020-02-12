@@ -136,10 +136,13 @@ def framing(img, no, all_contours, chromosome):
         frame.append([max_h, min_w + k])
     temp_index = (min_w - 10, min_h - 21)
     for pixel in frame:
-        if chromosome == 9:
-            img[pixel[0] - 10, pixel[1] - 10] = [255, 0, 0]
-        else:
-            img[pixel[0] - 10, pixel[1] - 10] = [0, 0, 255]
+        try:
+            if chromosome == 9:
+                img[pixel[0] - 10, pixel[1] - 10] = [255, 0, 0]
+            else:
+                img[pixel[0] - 10, pixel[1] - 10] = [0, 0, 255]
+        except Exception:
+            pass
 
     return img, temp_index
 
