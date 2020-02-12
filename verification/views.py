@@ -72,12 +72,18 @@ class CaseDetailView(LoginRequiredMixin, DetailView):
 def add_images(images_list, case_id, user_id):
     case = Case.objects.get(id=case_id)
     user = User.objects.get(id=user_id)
-
+    import time
+    timer = []
     for file in images_list:
+        start = time.time()
         image = MetaphaseImage(case=case, original_image=file, upload_user=user)
         image.save()
         case.confirm_status = None
         case.save()
+        end = time.time()
+        timer.append(int(end-start))
+    print('timer = ',end='')
+    print(timer)
 
 
 class UploadView(PermissionRequiredMixin, CreateView):
