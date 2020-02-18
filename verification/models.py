@@ -74,25 +74,27 @@ class Case(models.Model):
             ).order_by('id')
 
     def predict(self):
-        meta_filenames = []
-        for meta_img in self.get_new_metaphases:
-            meta_filenames.append(meta_img.original_image)
-
-        ch_img, contours, meta_img = import_meta(meta_filenames)
-
         model_9n = load_922_model('models/9N')
-        model_9p = load_922_model('models/9P')
-        img_9, prob_9, pred_9, result_9, framed, temp_index9 = predict_9(ch_img[0], model_9n, model_9p,
-                                                                         contours, meta_img)
-
+        model_9p = load_922_model('models/9P') 
         model_22f = load_922_model('models/22Find')
         model_22c = load_922_model('models/22Classify')
-        img_22, prob_22, pred_22, result_22, framed, temp_index22 = predict_22(ch_img[0], model_22f, model_22c,
-                                                                               contours, framed)
-        framed = array_to_img(framed)
-        framed = temp_index_function(framed, temp_index9, 9)
-        framed = temp_index_function(framed, temp_index22, 22)
+        
+        meta_filenames = []
+        framed = []
+        for meta_img in self.get_new_metaphases:
+            meta_filenames.append(meta_img.original_image)
+        
+        for filename in meta_filenames:
+            ch_img, contours, meta_img = import_meta(filename)            
+            img_9, prob_9, pred_9, result_9, temp_framed, temp_index9 = predict_9(ch_img[0], model_9n, model_9p,
+                                                                                contours, meta_img)
 
+            img_22, prob_22, pred_22, result_22, temp_framed, temp_index22 = predict_22(ch_img[0], model_22f, model_22c,
+                                                                                    contours, framed)
+            temp_framed = array_to_img(temp_framed)
+            temp_framed = temp_index_function(temp_framed, temp_index9, 9)
+            temp_framed = temp_index_function(temp_framed, temp_index22, 22)
+            framed.append(temp_framed)
         # temp = BytesIO()
         # framed.save(temp, 'JPEG')
         # self.result_image.save('result.jpg', File(temp), save=False)
