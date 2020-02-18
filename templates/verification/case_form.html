@@ -11,10 +11,6 @@
     <hr class="mt-0 mb-4">
     <form method="post" enctype="multipart/form-data" class="mx-auto" style="width: 500px;">
         {% csrf_token %}
-        <div class="form-group">
-            <label for="case__id">Case ID*</label>
-            <input type="text" class="form-control" id="case__id" name="case" placeholder="Case ID" required>
-        </div>
         {{ form | crispy }}
         <div class="form-group">
             <label for="original_image">Metaphase Images*</label>
@@ -36,7 +32,10 @@
     <script>
         $(document).ready(function(){
           $("#btn-upload").click(function(){
-            $("#progressbar").show();
+            $('form').submit(function()
+            {
+                $('#progressbar').show();
+            })
           });
         });
     </script>
