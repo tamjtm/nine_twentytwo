@@ -97,7 +97,7 @@ class Case(models.Model):
             temp_framed = temp_index_function(temp_framed, temp_index9, 9)
             temp_framed = temp_index_function(temp_framed, temp_index22, 22)
             
-            img_9.append(img_9t)
+            img_9.append(img_9t) # [[img1-1,img1-2], [img2-1,img2-2,img2-3], [img3-1,img3-2]]
             prob_9.append(prob_9t)
             pred_9.append(pred_9t)
             result_9.append(result_9t)
@@ -107,7 +107,7 @@ class Case(models.Model):
             pred_22.append(pred_22t)
             result_22.append(result_22t)
 
-            framed.append(temp_framed)
+            framed.append(temp_framed) #  [img1,img2,img3]
         # temp = BytesIO()
         # framed.save(temp, 'JPEG')
         # self.result_image.save('result.jpg', File(temp), save=False)
