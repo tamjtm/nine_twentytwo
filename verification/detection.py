@@ -143,7 +143,6 @@ def framing(img, no, all_contours, chromosome):
                 img[pixel[0] - 10, pixel[1] - 10] = [0, 0, 255]
         except Exception:
             pass
-        
 
     return img, temp_index
 

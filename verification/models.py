@@ -2,7 +2,6 @@ import sys
 from io import BytesIO
 
 from django.contrib.auth.models import User
-from django.core.files import File
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
 
@@ -71,33 +70,34 @@ class Case(models.Model):
     def get_new_metaphases(self):
         return MetaphaseImage.objects.filter(
             Q(case=self) & Q(result=None)
-            ).order_by('id')
+        ).order_by('id')
 
     def predict(self):
         model_9n = load_922_model('models/9N')
-        model_9p = load_922_model('models/9P') 
+        model_9p = load_922_model('models/9P')
         model_22f = load_922_model('models/22Find')
         model_22c = load_922_model('models/22Classify')
-        
+
         meta_filenames = []
         framed = []
-        img_9, prob_9, pred_9, result_9 = [],[],[],[]
-        img_22, prob_22, pred_22, result_22 = [],[],[],[]
+        img_9, prob_9, pred_9, result_9 = [], [], [], []
+        img_22, prob_22, pred_22, result_22 = [], [], [], []
         for meta_img in self.get_new_metaphases:
             meta_filenames.append(meta_img.original_image)
-        
-        for filename in meta_filenames:
-            ch_img, contours, meta_img = import_meta(filename)            
-            img_9t, prob_9t, pred_9t, result_9t, temp_framed, temp_index9 = predict_9(ch_img[0], model_9n, model_9p,
-                                                                                contours, meta_img)
 
-            img_22t, prob_22t, pred_22t, result_22t, temp_framed, temp_index22 = predict_22(ch_img[0], model_22f, model_22c,
-                                                                                    contours, temp_framed)
+        for filename in meta_filenames:
+            ch_img, contours, meta_img = import_meta(filename)
+            img_9t, prob_9t, pred_9t, result_9t, temp_framed, temp_index9 = predict_9(ch_img[0], model_9n, model_9p,
+                                                                                      contours, meta_img)
+
+            img_22t, prob_22t, pred_22t, result_22t, temp_framed, temp_index22 = predict_22(ch_img[0], model_22f,
+                                                                                            model_22c,
+                                                                                            contours, temp_framed)
             temp_framed = array_to_img(temp_framed)
             temp_framed = temp_index_function(temp_framed, temp_index9, 9)
             temp_framed = temp_index_function(temp_framed, temp_index22, 22)
-            
-            img_9.append(img_9t) # [[img1-1,img1-2], [img2-1,img2-2,img2-3], [img3-1,img3-2]]
+
+            img_9.append(img_9t)  # [[img1-1,img1-2], [img2-1,img2-2,img2-3], [img3-1,img3-2]]
             prob_9.append(prob_9t)
             pred_9.append(pred_9t)
             result_9.append(result_9t)
@@ -107,28 +107,28 @@ class Case(models.Model):
             pred_22.append(pred_22t)
             result_22.append(result_22t)
 
-            framed.append(temp_framed) #  [img1,img2,img3]
+            framed.append(temp_framed)  # [img1,img2,img3]
         # temp = BytesIO()
         # framed.save(temp, 'JPEG')
         # self.result_image.save('result.jpg', File(temp), save=False)
-        for meta_img in self.get_new_metaphases:
-            meta_img.result_image = to_imagefield(framed)
+        for i, meta_img in enumerate(self.get_new_metaphases):
+            meta_img.result_image = to_imagefield(framed[i])
             meta_img.save(flag=False)
 
-            for i in range(len(img_9)):
+            for j in range(len(img_9[i])):
                 chromosome = ChromosomeImage(metaphase=meta_img,
                                              type=9,
-                                             prediction=pred_9[i],
-                                             image=to_imagefield(img_9[i]),
-                                             prob=prob_9[i] * 100)
+                                             prediction=pred_9[i][j],
+                                             image=to_imagefield(img_9[i][j]),
+                                             prob=prob_9[i][j] * 100)
                 chromosome.save()
 
-            for i in range(len(img_22)):
+            for j in range(len(img_22[i])):
                 chromosome = ChromosomeImage(metaphase=meta_img,
                                              type=22,
-                                             prediction=pred_22[i],
-                                             image=to_imagefield(img_22[i]),
-                                             prob=prob_22[i] * 100)
+                                             prediction=pred_22[i][j],
+                                             image=to_imagefield(img_22[i][j]),
+                                             prob=prob_22[i][j] * 100)
                 chromosome.save()
 
             if result_9 is not None and result_22 is not None:
