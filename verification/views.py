@@ -51,7 +51,7 @@ class CaseDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(CaseDetailView, self).get_context_data(**kwargs)
-        context['images'] = MetaphaseImage.objects.filter(case=self.object).order_by('id')
+        # context['images'] = MetaphaseImage.objects.filter(case=self.object).order_by('id')
         return context
 
     # confirmation
@@ -78,11 +78,11 @@ def add_images(images_list, case_id, user_id):
         start = time.time()
         image = MetaphaseImage(case=case, original_image=file, upload_user=user)
         image.save()
-        case.confirm_status = None
-        case.save()
-        end = time.time()
-        timer.append(int(end-start))
-    print('timer = ',end='')
+    case.confirm_status = None
+    case.save()
+    end = time.time()
+    timer.append(int(end-start))
+    print('timer = ', end='')
     print(timer)
 
 
@@ -96,11 +96,6 @@ class UploadView(PermissionRequiredMixin, CreateView):
             case = Case.objects.get(id=request.POST.get('case'))
         except Case.DoesNotExist:
             user = request.user
-            # perm_doctor = Permission.objects.get(codename='view_case')
-            # perm_meditech = Permission.objects.get(codename='change_case')
-            # owner_list = User.objects.filter(
-            #     Q(user_permissions=perm_doctor) & ~Q(user_permissions=perm_meditech)
-            # )
             owner_list = User.objects.filter(groups__name='Doctor')
             count = owner_list.count()
             if count > 0:
@@ -110,7 +105,8 @@ class UploadView(PermissionRequiredMixin, CreateView):
                 owner = request.user
             case = Case(id=request.POST.get('case'), owner=owner,
                         diff_diagnosis=request.POST.get('diff_diagnosis'), upload_user=user)
-            case.save()
+            case.save(flag=False)
 
         add_images(request.FILES.getlist('images'), case.id, request.user.id)
+
         return redirect('case-detail', pk=case.id)

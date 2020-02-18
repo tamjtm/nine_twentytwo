@@ -34,9 +34,9 @@
                         <strong>Result: </strong>
                         <!--  Interpretation For Case  -->
                         {% if perms.verification.change_case or case.get_status == 'accepted' %}
-                            {% if case.get_result == 0 %}
+                            {% if case.result == 0 %}
                                 <h5 class="text-success">No Philadelphia Abnormality is detected</h5>
-                            {% elif case.get_result == 1 %}
+                            {% elif case.result == 1 %}
                                 <h5 class="text-danger">Philadelphia Abnormality is possible</h5>
                             {% else %}
                                 <h5 class="text-warning">This metaphase image can't be detected</h5>
@@ -104,28 +104,30 @@
             {% endif %}
 
             <!--  Metaphase Images  -->
-
-
-                {% if images %}
+                {% if case.get_metaphases %}
                     <div id="carouselExampleIndicators" class="carousel slide mx-auto" data-interval="false">
-<!--                        <ol class="carousel-indicators" style="bottom: -40px;">-->
-<!--                            {% for img in images %}-->
-<!--                                {% if forloop.counter == 1 %}-->
-<!--                                <li data-target="#carouselExampleIndicators" data-slide-to="{{ forloop.counter }}" class="active"></li>-->
-<!--                                {% else %}-->
-<!--                                <li data-target="#carouselExampleIndicators" data-slide-to="{{ forloop.counter }}"></li>-->
-<!--                                {% endif %}-->
-<!--                            {% endfor %}-->
-<!--                        </ol>-->
+                        <ol class="carousel-indicators" style="bottom: -40px;">
+                            {% for img in case.get_metaphases %}
+                                {% if forloop.counter == 1 %}
+                                <li data-target="#carouselExampleIndicators" data-slide-to="{{ forloop.counter }}" class="active"></li>
+                                {% else %}
+                                <li data-target="#carouselExampleIndicators" data-slide-to="{{ forloop.counter }}"></li>
+                                {% endif %}
+                            {% endfor %}
+                        </ol>
                         <div class="carousel-inner mt-4">
-                            {% for img in images %}
+                            {% for img in case.get_metaphases %}
                                 {% if forloop.counter == 1 %}
                                 <div class="carousel-item active">
                                 {% else %}
                                 <div class="carousel-item">
                                 {% endif %}
-                                    <h5 class="p-1 mb-1 text-dark text-uppercase text-center">{{ img }}</h5>
-        <!--                                <h4><span class="badge badge-light">{{ img.get_result }}</span></h4>-->
+                                    <center>
+                                    <div class="d-inline-flex">
+                                        <h5 class="p-1 mb-1 text-dark text-uppercase">{{ img }}  </h5>
+                                        <h4><span class="ml-1 badge badge-light">{{ img.get_result }}</span></h4>
+                                    </div>
+                                    </center>
                                         {% if img.result_image and perms.verification.change_case or case.get_status == 'accepted' %}
                                             <div class="row">
                                                 <div class="col-7 text-center">
@@ -168,21 +170,21 @@
                                             </div>
 
                                         {% else %}
-                                            <img class="d-block w-75" src="{{ img.original_image.url }}">
+                                            <img class="d-block w-100" src="{{ img.original_image.url }}">
                                         {% endif %}
                                 </div>
                                 {% endfor %}
                                 </div>
 
                         </div>
-<!--                        <center class="mt-4">-->
-<!--                            <a href="#carouselExampleIndicators" class="btn btn-dark btn-sm" role="button" data-slide="prev">-->
-<!--                                Previous-->
-<!--                            </a>-->
-<!--                            <a href="#carouselExampleIndicators" class="btn btn-dark btn-sm" role="button" data-slide="next">-->
-<!--                                Next-->
-<!--                            </a>-->
-<!--                        </center>-->
+                        <center class="mt-4 mb-2">
+                            <a href="#carouselExampleIndicators" class="btn btn-dark btn-sm" role="button" data-slide="prev">
+                                Previous
+                            </a>
+                            <a href="#carouselExampleIndicators" class="btn btn-dark btn-sm" role="button" data-slide="next">
+                                Next
+                            </a>
+                        </center>
                     </div>
                 {% else %}
                     <center>
@@ -201,7 +203,4 @@
 
         </div>
     </div>
-
-<!--    <button type="submit" value="reject" name="result" class="btn btn-danger" data-toggle="modal" data-target="#myModal">Reject</button>-->
-
 {% endblock %}
