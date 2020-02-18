@@ -81,19 +81,32 @@ class Case(models.Model):
         
         meta_filenames = []
         framed = []
+        img_9, prob_9, pred_9, result_9 = [],[],[],[]
+        img_22, prob_22, pred_22, result_22 = [],[],[],[]
         for meta_img in self.get_new_metaphases:
             meta_filenames.append(meta_img.original_image)
         
         for filename in meta_filenames:
             ch_img, contours, meta_img = import_meta(filename)            
-            img_9, prob_9, pred_9, result_9, temp_framed, temp_index9 = predict_9(ch_img[0], model_9n, model_9p,
+            img_9t, prob_9t, pred_9t, result_9t, temp_framed, temp_index9 = predict_9(ch_img[0], model_9n, model_9p,
                                                                                 contours, meta_img)
 
-            img_22, prob_22, pred_22, result_22, temp_framed, temp_index22 = predict_22(ch_img[0], model_22f, model_22c,
-                                                                                    contours, framed)
+            img_22t, prob_22t, pred_22t, result_22t, temp_framed, temp_index22 = predict_22(ch_img[0], model_22f, model_22c,
+                                                                                    contours, temp_framed)
             temp_framed = array_to_img(temp_framed)
             temp_framed = temp_index_function(temp_framed, temp_index9, 9)
             temp_framed = temp_index_function(temp_framed, temp_index22, 22)
+            
+            img_9.append(img_9t)
+            prob_9.append(prob_9t)
+            pred_9.append(pred_9t)
+            result_9.append(result_9t)
+
+            img_22.append(img_22t)
+            prob_22.append(prob_22t)
+            pred_22.append(pred_22t)
+            result_22.append(result_22t)
+
             framed.append(temp_framed)
         # temp = BytesIO()
         # framed.save(temp, 'JPEG')

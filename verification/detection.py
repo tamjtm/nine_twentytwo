@@ -57,7 +57,7 @@ def show_all(list_img):
 
 def import_meta(filename):
     meta = []
-    img = image.load_img(filename[0], color_mode='grayscale')
+    img = image.load_img(filename, color_mode='grayscale')
     img = image.img_to_array(img, dtype='uint8')
     img = img.reshape(img.shape[0], img.shape[1])
     full_meta_img = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
