@@ -140,7 +140,7 @@
                                                                     <div class="d-flex flex-column">
                                                                         <strong style="color: red;">{{ ch.name }}</strong>
                                                                         <img src="{{ ch.image.url }}">
-                                                                        <small>{{ ch.get_prediction }}-{{ ch.prob | floatformat:2 }}</small>
+                                                                        <small>{{ ch.get_prediction }}-{{ ch.prob }}%</small>
                                                                     </div>
                                                                 {% endfor %}
                                                             {% else %}
@@ -156,7 +156,7 @@
                                                                     <div class="d-flex flex-column">
                                                                         <strong style="color: blue;">{{ ch.name }}</strong>
                                                                         <img src="{{ ch.image.url }}">
-                                                                        <small>{{ ch.get_prediction }}-{{ ch.prob | floatformat:2}}</small>
+                                                                        <small>{{ ch.get_prediction }}-{{ ch.prob}}%</small>
                                                                     </div>
                                                                 {% endfor %}
                                                             {% else %}

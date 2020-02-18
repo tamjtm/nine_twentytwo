@@ -25,7 +25,7 @@ class Case(models.Model):
     reject_message = models.CharField(max_length=200, null=True, blank=True)
 
     class Meta:
-        ordering = ('id', 'upload_time', )
+        ordering = ('id', 'upload_time',)
 
     def __str__(self):
         return self.id
@@ -89,21 +89,23 @@ class MetaphaseImage(models.Model):
     result_image = models.ImageField(upload_to=set_images_path("result"), null=True, blank=True)
 
     class Meta:
-        ordering = ('case', 'id', )
+        ordering = ('case', 'id',)
 
     def predict(self):
         ch_img, contours, meta_img = import_meta(self.original_image)
 
         model_9n = load_922_model('models/9N')
         model_9p = load_922_model('models/9P')
-        img_9, prob_9, pred_9, result_9, framed, temp_index9= predict_9(ch_img[0], model_9n, model_9p, contours, meta_img)
+        img_9, prob_9, pred_9, result_9, framed, temp_index9 = predict_9(ch_img[0], model_9n, model_9p,
+                                                                         contours, meta_img)
 
         model_22f = load_922_model('models/22Find')
         model_22c = load_922_model('models/22Classify')
-        img_22, prob_22, pred_22, result_22, framed, temp_index22 = predict_22(ch_img[0], model_22f, model_22c, contours, framed)
+        img_22, prob_22, pred_22, result_22, framed, temp_index22 = predict_22(ch_img[0], model_22f, model_22c,
+                                                                               contours, framed)
         framed = array_to_img(framed)
-        framed = temp_index_function(framed, temp_index9,9)
-        framed = temp_index_function(framed, temp_index22,22)
+        framed = temp_index_function(framed, temp_index9, 9)
+        framed = temp_index_function(framed, temp_index22, 22)
 
         # if len(img_9) > 0 and len(img_22) > 0:
         temp = BytesIO()
@@ -115,7 +117,7 @@ class MetaphaseImage(models.Model):
                                          type=9,
                                          prediction=pred_9[i],
                                          image=get_image(img_9[i]),
-                                         prob=prob_9[i])
+                                         prob=prob_9[i] * 100)
             chromosome.save()
 
         for i in range(len(img_22)):
@@ -123,7 +125,7 @@ class MetaphaseImage(models.Model):
                                          type=22,
                                          prediction=pred_22[i],
                                          image=get_image(img_22[i]),
-                                         prob=prob_22[i])
+                                         prob=prob_22[i] * 100)
             chromosome.save()
 
         if result_9 is not None and result_22 is not None:
@@ -160,7 +162,7 @@ class MetaphaseImage(models.Model):
     def get_chromosome9(self):
         return ChromosomeImage.objects.filter(
             Q(metaphase=self) & Q(type=9)
-            ).order_by('name')
+        ).order_by('name')
 
     @property
     def get_chromosome22(self):
@@ -176,13 +178,13 @@ class ChromosomeImage(models.Model):
     type = models.IntegerField(choices=((9, 'Chromosome 9'), (22, 'Chromosome 22')))
     prediction = models.BooleanField(null=True, blank=True)
     image = models.ImageField(upload_to=set_images_path("."), null=True, blank=True)
-    prob = models.FloatField(null=True, blank=True)
+    prob = models.IntegerField(null=True, blank=True)
 
     def save(self, flag=True, *args, **kwargs):
         if flag:
             number = ChromosomeImage.objects.filter(
                 Q(metaphase=self.metaphase) & Q(type=self.type)
-                ).count()
+            ).count()
             self.name = str(self.type) + chr(65 + number)
             self.id = self.metaphase.id + "_" + self.name
             self.save(flag=False, *args, **kwargs)
