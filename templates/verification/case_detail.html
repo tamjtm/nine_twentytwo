@@ -12,7 +12,8 @@
                 <div class="card-body">
                     <p><strong>Physician: </strong>{{ case.owner }}</p>
 
-                    <p><strong>Differential Diagnosis: </strong>{% if case.diff_diagnosis %}{{ case.diff_diagnosis }}{% else %}-{% endif %}</p>
+                    <p><strong>Differential Diagnosis: </strong><br>{% if case.diff_diagnosis %}{{ case.diff_diagnosis
+                        }}{% else %}-{% endif %}</p>
 
                     <strong>Uploaded by: </strong>
                     <ul class="list-inline">
@@ -29,7 +30,7 @@
                     {% else %}
                     <p>-</p>
                     {% endif %}
-                    <hr class="mt-5 mb-5">
+                    <hr class="mt-4 mb-4">
                     <div class="mt-3">
                         <strong>Result: </strong>
                         <!--  Interpretation For Case  -->

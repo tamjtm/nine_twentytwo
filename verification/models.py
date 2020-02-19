@@ -4,7 +4,6 @@ from io import BytesIO
 from django.contrib.auth.models import User
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
-
 # Create your models here.
 from django.db.models import Q
 from django.utils.deconstruct import deconstructible
@@ -45,22 +44,6 @@ class Case(models.Model):
             return 'rejected'
         else:
             return 'waiting'
-
-    # @property
-    # def get_result(self):
-    #     all_count = pos_count = neg_count = 0
-    #     for img in MetaphaseImage.objects.filter(case=self).select_related():
-    #         if img.result == 1:
-    #             pos_count += 1
-    #         elif img.result == 0:
-    #             neg_count += 1
-    #         all_count += 1
-    #     if pos_count > 0:
-    #         return True
-    #     elif neg_count > 0:
-    #         return False
-    #     else:
-    #         return None
 
     @property
     def get_metaphases(self):

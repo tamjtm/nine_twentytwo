@@ -1,5 +1,6 @@
-from random import randint
 import time
+from random import randint
+
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.models import User
 from django.db.models import Q
@@ -7,6 +8,7 @@ from django.forms import TextInput
 from django.shortcuts import redirect
 from django.utils import timezone
 from django.views.generic import ListView, DetailView, CreateView
+
 from verification.models import Case, MetaphaseImage
 
 
@@ -19,8 +21,6 @@ class CaseListView(LoginRequiredMixin, ListView):
             object_list = Case.objects.filter(
                 Q(id__icontains=query) | Q(upload_user__username__icontains=query)
                 | Q(confirm_user__username__icontains=query) | Q(owner__username__icontains=query)
-                | Q(confirm_status__icontains=query)
-
             ).order_by('confirm_status', 'upload_time')
         else:
             object_list = Case.objects.all().order_by('confirm_status', 'upload_time')
@@ -65,22 +65,6 @@ class CaseDetailView(LoginRequiredMixin, DetailView):
         return redirect('index')
 
 
-# def add_images(images_list, case_id, user_id):
-#     case = Case.objects.get(id=case_id)
-#     user = User.objects.get(id=user_id)
-#     import time
-#     start = time.time()
-#     for i, file in enumerate(images_list):
-#         image = MetaphaseImage(case=case, original_image=file, upload_user=user)
-#         image.save()
-#         return render(request, 'userhomepage.html', result)
-#     case.confirm_status = None
-#     case.save()
-#     end = time.time()
-#     timer = int(end-start)
-#     print(len(images_list), "imgs =>", timer, "s.")
-
-
 class UploadView(PermissionRequiredMixin, CreateView):
     model = Case
     permission_required = 'verification.add_metaphaseimage'
@@ -92,10 +76,12 @@ class UploadView(PermissionRequiredMixin, CreateView):
     }
 
     def post(self, request, *args, **kwargs):
+        start = time.time()
         user = request.user
-        try:
+        count = Case.objects.filter(id=request.POST.get('id')).count()
+        if count > 0:
             case = Case.objects.get(id=request.POST.get('id'))
-        except Case.DoesNotExist:
+        else:
             owner_list = User.objects.filter(groups__name='Doctor')
             count = owner_list.count()
             if count > 0:
@@ -107,10 +93,7 @@ class UploadView(PermissionRequiredMixin, CreateView):
                         diff_diagnosis=request.POST.get('diff_diagnosis'), upload_user=user)
             case.save(flag=False)
 
-        # add_images(request.FILES.getlist('images'), case.id, request.user.id)
         images_list = request.FILES.getlist('images')
-        start = time.time()
-        rendered_str = []
         for i, file in enumerate(images_list, 1):
             image = MetaphaseImage(case=case, original_image=file, upload_user=user)
             image.save()

@@ -32,7 +32,7 @@ urlpatterns = [
     path('', redirect_root),
     path('index/', CaseListView.as_view(), name='index'),
     path('mycases/', CaseUserListView.as_view(), name='my-cases'),
-    path('case/<str:pk>/', CaseDetailView.as_view(), name='case-detail'),
+    path('case/<str:pk>', CaseDetailView.as_view(), name='case-detail'),
     path('upload/', UploadView.as_view()),
 ]
 
