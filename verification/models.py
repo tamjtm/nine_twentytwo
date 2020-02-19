@@ -20,7 +20,7 @@ def to_imagefield(img):
 
 
 class Case(models.Model):
-    id = models.CharField(primary_key=True, max_length=20)
+    id = models.CharField(primary_key=True, verbose_name="Case ID", max_length=20)
     owner = models.ForeignKey(User, verbose_name="Physician", related_name='own', on_delete=models.SET_NULL, null=True)
     diff_diagnosis = models.CharField(max_length=100, verbose_name="Differential Diagnosis", null=True, blank=True)
     result = models.BooleanField(null=True, blank=True)
@@ -107,8 +107,26 @@ class Case(models.Model):
                                              prob=prob_22[i][j] * 100)
                 chromosome.save()
 
-            if result_9 is not None and result_22 is not None:
-                if result_9 + result_22 == 0:
+            if result_9[i] is not None and result_22[i] is not None:
+                if result_9[i] + result_22[i] == 0:
+                    print(">>> Negative")
+                    meta_img.result = 0
+                    meta_img.save(flag=False)
+                else:
+                    print(">>> Positive")
+                    meta_img.result = 1
+                    meta_img.save(flag=False)
+            elif result_9[i] is not None:
+                if result_9[i] == 0:
+                    print(">>> Negative")
+                    meta_img.result = 0
+                    meta_img.save(flag=False)
+                else:
+                    print(">>> Positive")
+                    meta_img.result = 1
+                    meta_img.save(flag=False)
+            elif result_22[i] is not None:
+                if result_22[i] == 0:
                     print(">>> Negative")
                     meta_img.result = 0
                     meta_img.save(flag=False)
@@ -128,7 +146,6 @@ class Case(models.Model):
             elif meta_img.result == 0:
                 neg_count += 1
             all_count += 1
-        print(all_count, pos_count, neg_count)
         if pos_count > 0:
             return True
         elif neg_count > 0:
@@ -171,53 +188,6 @@ class MetaphaseImage(models.Model):
     class Meta:
         ordering = ('case', 'id',)
 
-    # def predict(self):
-    #     ch_img, contours, meta_img = import_meta(self.original_image)
-    #
-    #     model_9n = load_922_model('models/9N')
-    #     model_9p = load_922_model('models/9P')
-    #     img_9, prob_9, pred_9, result_9, framed, temp_index9 = predict_9(ch_img[0], model_9n, model_9p,
-    #                                                                      contours, meta_img)
-    #
-    #     model_22f = load_922_model('models/22Find')
-    #     model_22c = load_922_model('models/22Classify')
-    #     img_22, prob_22, pred_22, result_22, framed, temp_index22 = predict_22(ch_img[0], model_22f, model_22c,
-    #                                                                            contours, framed)
-    #     framed = array_to_img(framed)
-    #     framed = temp_index_function(framed, temp_index9, 9)
-    #     framed = temp_index_function(framed, temp_index22, 22)
-    #
-    #     # if len(img_9) > 0 and len(img_22) > 0:
-    #     temp = BytesIO()
-    #     framed.save(temp, 'JPEG')
-    #     self.result_image.save('result.jpg', File(temp), save=False)
-    #
-    #     for i in range(len(img_9)):
-    #         chromosome = ChromosomeImage(metaphase=self,
-    #                                      type=9,
-    #                                      prediction=pred_9[i],
-    #                                      image=to_imagefield(img_9[i]),
-    #                                      prob=prob_9[i] * 100)
-    #         chromosome.save()
-    #
-    #     for i in range(len(img_22)):
-    #         chromosome = ChromosomeImage(metaphase=self,
-    #                                      type=22,
-    #                                      prediction=pred_22[i],
-    #                                      image=to_imagefield(img_22[i]),
-    #                                      prob=prob_22[i] * 100)
-    #         chromosome.save()
-    #
-    #     if result_9 is not None and result_22 is not None:
-    #         if result_9 + result_22 == 0:
-    #             print(">>> Negative")
-    #             return 0
-    #         else:
-    #             print(">>> Positive")
-    #             return 1
-    #     print(">>> Cannot detect")
-    #     return None
-
     def save(self, flag=True, *args, **kwargs):
         if flag:
             name = "%02d" % (MetaphaseImage.objects.filter(case=self.case).count() + 1)
@@ -232,9 +202,9 @@ class MetaphaseImage(models.Model):
     @property
     def get_result(self):
         if self.result == 1:
-            return 'Positive'
+            return 'found'
         elif self.result == 0:
-            return 'Negative'
+            return 'not found'
         else:
             return 'cannot detect'
 
