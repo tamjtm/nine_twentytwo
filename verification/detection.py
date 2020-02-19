@@ -7,6 +7,9 @@ from PIL import ImageDraw, ImageFont
 from skimage import measure
 from tensorflow_core.python.keras.models import model_from_json
 
+all_contours = []
+temp_framed = []
+
 
 def load_922_model(directory):
     # load json and create model
@@ -45,26 +48,18 @@ def rotate_bound(image, angle):
     # perform the actual rotation and return the image
     return cv2.warpAffine(image, M, (nW, nH), borderValue=(255, 255, 255))
 
-
-def show_all(list_img):
-    print(len(list_img))
-    plt.figure(figsize=(12, 12))
-    columns = 10
-    for i, img in enumerate(list_img):
-        plt.subplot(len(list_img) / columns + 1, columns, i + 1)
-        plt.imshow(img, cmap='gray')
-
-
-def import_meta(filename):
-    meta = []
+def prep_meta_img(filename):
+    #load metaphase
     img = image.load_img(filename, color_mode='grayscale')
     img = image.img_to_array(img, dtype='uint8')
     img = img.reshape(img.shape[0], img.shape[1])
-    full_meta_img = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
-
+    temp_framed.append(cv2.cvtColor(img, cv2.COLOR_GRAY2RGB))
+    
+    #find contour - crop - rotate
+    ch_img = []
     cropped = []
     temp_contour = []
-    img = cv2.copyMakeBorder(img, 10, 10, 10, 10, cv2.BORDER_CONSTANT, value=255)
+    img = cv2.copyMakeBorder(img, 5, 5, 5, 5, cv2.BORDER_CONSTANT, value=255)
     contours = measure.find_contours(img, 200)
     for j, con in enumerate(contours):
         w = max(con[:, 1]) - min(con[:, 1])
@@ -75,7 +70,7 @@ def import_meta(filename):
                         int(min(con[:, 1]) - 2):int(max(con[:, 1]) + 2)]
             temp_crop = cv2.copyMakeBorder(temp_crop, 5, 5, 5, 5, cv2.BORDER_CONSTANT, value=255)
             max_diff = 0
-            for angle in range(0, 180, 15):  # หมุนหาทิศที่ตั้งตรง
+            for angle in range(0, 180, 15):  # rotate
                 rotated = rotate_bound(temp_crop, angle)
                 contours2 = measure.find_contours(rotated, 200)
                 for con2 in contours2:
@@ -87,14 +82,14 @@ def import_meta(filename):
                                         int(min(con2[:, 1]) - 2):int(max(con2[:, 1]) + 2)]
             cropped.append(right_rotated)
 
-    s = sorted(range(len(cropped)), key=lambda k: cropped[k].shape[0])
-    all_contours = []
+    #sort crop image and contour 
+    index_sorted = sorted(range(len(cropped)), key=lambda k: cropped[k].shape[0])
     cropped2 = []
-    for i in s:
+    for i in index_sorted:
         all_contours.append(temp_contour[i])
         cropped2.append(cropped[i])
-    # cropped.sort(key=np.shape)
 
+    #resize(add border)
     fixed_h, fixed_w = 100, 72
     temp = []
     for j, img in enumerate(cropped2):
@@ -109,20 +104,17 @@ def import_meta(filename):
             right = int((fixed_w - img.shape[1]) / 2 + 1)
         else:
             right = int((fixed_w - img.shape[1]) / 2)
+        
         if top > 0 and bot > 0 and left > 0 and right > 0:
-            temp.append(cv2.copyMakeBorder(img, top, bot, left, right, cv2.BORDER_CONSTANT, value=255))
+            temp = cv2.copyMakeBorder(img, top, bot, left, right, cv2.BORDER_CONSTANT, value=255)
+            ch_img.append(cv2.cvtColor(img_to_array(temp), cv2.COLOR_GRAY2RGB))
+    
+    ch_img = np.asarray(ch_img)
 
-    comp = []
-    for j in temp:
-        comp.append(cv2.cvtColor(img_to_array(j), cv2.COLOR_GRAY2RGB))
-    comp = np.asarray(comp)
-    meta.append(comp)
-    # show_all(temp)
-
-    return meta, all_contours, full_meta_img
+    return ch_img
 
 
-def framing(img, no, all_contours, chromosome):
+def framing(no, chromosome):
     min_h = int(min(all_contours[no][:, 0])) - 2
     max_h = int(max(all_contours[no][:, 0])) + 2
     min_w = int(min(all_contours[no][:, 1])) - 2
@@ -138,44 +130,43 @@ def framing(img, no, all_contours, chromosome):
     for pixel in frame:
         try:
             if chromosome == 9:
-                img[pixel[0] - 10, pixel[1] - 10] = [255, 0, 0]
+                temp_framed[0][pixel[0] - 5, pixel[1] - 5] = [255, 0, 0]
             else:
-                img[pixel[0] - 10, pixel[1] - 10] = [0, 0, 255]
+                temp_framed[0][pixel[0] - 5, pixel[1] - 5] = [0, 0, 255]
         except Exception:
             pass
 
-    return img, temp_index
+    return temp_index
 
 
-def temp_index_function(frame_img, temp_index, chro):
+def label_framing(temp_index, chro):
     font = ImageFont.truetype('Roboto-Bold.ttf', size=10)
-    draw = ImageDraw.Draw(frame_img)
+    draw = ImageDraw.Draw(temp_framed[0])
     message = "ABCDEFGHI"
     if chro == 9:
         color = 'rgb(255, 0, 0)'
     else:
         color = 'rgb(0, 0, 255)'
     for i, index in enumerate(temp_index):
-        draw.text(index, str(chro) + message[i], fill=color, font=font)
-    return frame_img
+        draw.text(index, str(chro) + message[i], fill=color, font=font) 
 
 
-def predict_22(meta_img, model_find, model_classify, all_contours, full_meta_img):
+def predict_22(ch_img, model_find, model_classify):
     chromosome = 22
     n = 5
-    frame_img = full_meta_img
-    find = model_find.predict_classes(meta_img[:n])
-    classify = model_classify.predict_classes(meta_img[:n])
-    prob = model_classify.predict(meta_img[:n])
+    
+    find = model_find.predict_classes(ch_img[:n])
+    classify = model_classify.predict_classes(ch_img[:n])
+    prob = model_classify.predict(ch_img[:n])
 
     temp_index2 = []
     index_n, index_p, result_img, result_prob, result_pred = [], [], [], [], []
-    for j in range(len(meta_img)):
+    for j in range(len(ch_img)):
         if j < n and len(result_img) < 4:
-            img = array_to_img(meta_img[j])
+            img = array_to_img(ch_img[j])
 
             if find[j] == 1:  # chr 22
-                frame_img, temp_index = framing(full_meta_img, j, all_contours, chromosome)
+                temp_index = framing(j, chromosome)
                 temp_index2.append(temp_index)
                 if classify[j] == 1:  # phila 22
                     print(str(chromosome) + 'PH : ' + str(j))
@@ -202,27 +193,26 @@ def predict_22(meta_img, model_find, model_classify, all_contours, full_meta_img
         print('cannot predict this metaphase')
         result = None
 
-    return result_img, result_prob, result_pred, result, frame_img, temp_index2
+    return result_img, result_prob, result_pred, result, temp_index2
 
 
-def predict_9(meta_img, model_n, model_p, all_contours, full_meta_img):
+def predict_9(ch_img, model_n, model_p):
     chromosome = 9
     n = 36
 
-    predicted_N = model_n.predict_classes(meta_img[:n])
-    prob_n = model_n.predict(meta_img[:n])
-    predicted_P = model_p.predict_classes(meta_img[:n])
-    prob_p = model_p.predict(meta_img[:n])
+    predicted_N = model_n.predict_classes(ch_img[:n])
+    prob_n = model_n.predict(ch_img[:n])
+    predicted_P = model_p.predict_classes(ch_img[:n])
+    prob_p = model_p.predict(ch_img[:n])
 
-    frame_img = full_meta_img
     temp_index2 = []
     index_n, index_p, result_img, result_prob, result_pred = [], [], [], [], []
-    for j in range(len(meta_img)):
+    for j in range(len(ch_img)):
         if j < n and len(result_img) < 4:
-            img = array_to_img(meta_img[j])
+            img = array_to_img(ch_img[j])
 
             if predicted_N[j] == 1 or predicted_P[j] == 1:
-                frame_img, temp_index = framing(full_meta_img, j, all_contours, chromosome)
+                temp_index = framing(j, chromosome)
                 temp_index2.append(temp_index)
             if predicted_N[j] == 1 and predicted_P[j] == 1:
                 print(str(chromosome) + 'chromosome: both model predict same result at index ' + str(j))
@@ -255,4 +245,48 @@ def predict_9(meta_img, model_n, model_p, all_contours, full_meta_img):
         print('cannot predict this metaphase')
         result = None
 
-    return result_img, result_prob, result_pred, result, frame_img, temp_index2
+    return result_img, result_prob, result_pred, result, temp_index2
+
+def nine_22(meta_filename):
+    model_9n = load_922_model('models/9N')
+    model_9p = load_922_model('models/9P')
+    model_22f = load_922_model('models/22Find')
+    model_22c = load_922_model('models/22Classify')
+
+    img_9, prob_9, pred_9, result_9 = [], [], [], []
+    img_22, prob_22, pred_22, result_22 = [], [], [], []
+    framed = []
+
+    for filename in meta_filename:
+        all_contours.clear()
+        temp_framed.clear()
+        output = {9,22}    
+        
+        #preprocess metaphase image
+        ch_img = prep_meta_img(filename)
+
+        #predict 9,22 and framing
+        img_9t,prob_9t,pred_9t,result_9t,index9 = predict_9(ch_img, model_9n, model_9p)
+        img_22t,prob_22t,pred_22t,result_22t,index22 = predict_22(ch_img, model_22f, model_22c)
+        temp_framed[0] = array_to_img(temp_framed[0])
+        
+        #label framing
+        label_framing(index9, 9)
+        label_framing(index22, 22)
+
+        #save output
+        img_9.append(img_9t)  # [[img1-1,img1-2], [img2-1,img2-2,img2-3], [img3-1,img3-2]]
+        prob_9.append(prob_9t)
+        pred_9.append(pred_9t)
+        result_9.append(result_9t)
+
+        img_22.append(img_22t)
+        prob_22.append(prob_22t)
+        pred_22.append(pred_22t)
+        result_22.append(result_22t)
+
+        framed.append(temp_framed[0])  # [img1,img2,img3]
+
+    return img_9,prob_9,pred_9,result_9,\
+    img_22, prob_22, pred_22, result_22,\
+    framed
