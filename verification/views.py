@@ -1,6 +1,6 @@
 import time
 from random import randint
-import time
+
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.models import User
 from django.db.models import Q
@@ -76,29 +76,33 @@ class UploadView(PermissionRequiredMixin, CreateView):
     }
 
     def post(self, request, *args, **kwargs):
-        start = time.time()
         user = request.user
+
         count = Case.objects.filter(id=request.POST.get('id')).count()
+
         if count > 0:
             case = Case.objects.get(id=request.POST.get('id'))
         else:
             owner_list = User.objects.filter(groups__name='Doctor')
             count = owner_list.count()
+
             if count > 0:
                 random_index = randint(0, count-1)
                 owner = owner_list[random_index]
             else:
                 owner = request.user
+
             case = Case(id=request.POST.get('id'), owner=owner,
                         diff_diagnosis=request.POST.get('diff_diagnosis'), upload_user=user)
             case.save(flag=False)
 
+        start = time.time()
         images_list = request.FILES.getlist('images')
+
         for i, file in enumerate(images_list, 1):
             image = MetaphaseImage(case=case, original_image=file, upload_user=user)
             image.save()
-            result = {'current': i, 'total': len(images_list)}
-            # render(request, 'verification/case_form.html', result)
+
         case.confirm_status = None
         case.save()
         end = time.time()

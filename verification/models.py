@@ -59,79 +59,44 @@ class Case(models.Model):
         meta_filenames = []
         for meta_img in self.get_new_metaphases:
             meta_filenames.append(meta_img.original_image)
-        
-        output = nine_22(meta_filenames)
-        
-        img_9, prob_9, pred_9, result_9 = [x for x in output[0:4]]     
-        img_22, prob_22, pred_22, result_22 = [x for x in output[4:8]]
-        #img_9 = [[img1-1,img1-2], [img2-1,img2-2,img2-3], [img3-1,img3-2]]
-        framed  = output[8]     # [img1,img2,img3]
 
-        # temp = BytesIO()
-        # framed.save(temp, 'JPEG')
-        # self.result_image.save('result.jpg', File(temp), save=False)
-        for i, meta_img in enumerate(self.get_new_metaphases):
-            meta_img.result_image = to_imagefield(framed[i])
+        print('detection started...')
+        prediction = nine_22(meta_filenames)
+        print('...interpreting...')
+
+        for i, meta_img in enumerate(self.get_new_metaphases, 1):
+            meta_img.result_image = to_imagefield(prediction[i]['framed'])
             meta_img.save(flag=False)
 
-            for j in range(len(img_9[i])):
+            for j in range(len(prediction[i]['img_9'])):
                 chromosome = ChromosomeImage(metaphase=meta_img,
                                              type=9,
-                                             prediction=pred_9[i][j],
-                                             image=to_imagefield(img_9[i][j]),
-                                             prob=prob_9[i][j] * 100)
+                                             prediction=prediction[i]['pred_9'][j],
+                                             image=to_imagefield(prediction[i]['img_9'][j]),
+                                             prob=prediction[i]['prob_9'][j] * 100)
                 chromosome.save()
 
-            for j in range(len(img_22[i])):
+            for j in range(len(prediction[i]['img_22'])):
                 chromosome = ChromosomeImage(metaphase=meta_img,
                                              type=22,
-                                             prediction=pred_22[i][j],
-                                             image=to_imagefield(img_22[i][j]),
-                                             prob=prob_22[i][j] * 100)
+                                             prediction=prediction[i]['pred_22'][j],
+                                             image=to_imagefield(prediction[i]['img_22'][j]),
+                                             prob=prediction[i]['prob_22'][j] * 100)
                 chromosome.save()
 
-            if result_9[i] is not None and result_22[i] is not None:
-                if result_9[i] + result_22[i] == 0:
-                    print(">>> Negative")
-                    meta_img.result = 0
-                    meta_img.save(flag=False)
-                else:
-                    print(">>> Positive")
-                    meta_img.result = 1
-                    meta_img.save(flag=False)
-            elif result_9[i] is not None:
-                if result_9[i] == 0:
-                    print(">>> Negative")
-                    meta_img.result = 0
-                    meta_img.save(flag=False)
-                else:
-                    print(">>> Positive")
-                    meta_img.result = 1
-                    meta_img.save(flag=False)
-            elif result_22[i] is not None:
-                if result_22[i] == 0:
-                    print(">>> Negative")
-                    meta_img.result = 0
-                    meta_img.save(flag=False)
-                else:
-                    print(">>> Positive")
-                    meta_img.result = 1
-                    meta_img.save(flag=False)
-            else:
-                print(">>> Cannot detect")
-                meta_img.result = None
-                meta_img.save(flag=False)
+            meta_img.result = prediction[i]['result']
+            meta_img.save(flag=False)
 
-        all_count = pos_count = neg_count = 0
+        meta_result = []
         for meta_img in self.get_metaphases:
-            if meta_img.result == 1:
-                pos_count += 1
-            elif meta_img.result == 0:
-                neg_count += 1
-            all_count += 1
-        if pos_count > 0:
+            meta_result.append(meta_img.result)
+
+        print('...detection finished')
+        print('---------------------------')
+        print("ph detection result:", meta_result)
+        if 1 in meta_result:
             return True
-        elif neg_count > 0:
+        elif 0 in meta_result:
             return False
         else:
             return None
@@ -176,7 +141,6 @@ class MetaphaseImage(models.Model):
             name = "%02d" % (MetaphaseImage.objects.filter(case=self.case).count() + 1)
             self.id = self.case.id + "_" + name
             self.save(flag=False, *args, **kwargs)
-            # self.result = self.predict()
         return super(MetaphaseImage, self).save(*args, **kwargs)
 
     def __str__(self):

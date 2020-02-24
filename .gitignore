@@ -1,0 +1,7 @@
+/db.sqlite3
+/.gitattributes
+/.idea/
+/media/
+/models/9P_model_old.json
+/models/9P_weight_old.h5
+/venv/

@@ -12,8 +12,12 @@
                 <div class="card-body">
                     <p><strong>Physician: </strong>{{ case.owner }}</p>
 
-                    <p><strong>Differential Diagnosis: </strong><br>{% if case.diff_diagnosis %}{{ case.diff_diagnosis
-                        }}{% else %}-{% endif %}</p>
+                    <p><strong>Differential Diagnosis: </strong><br>
+                        {% if case.diff_diagnosis %}
+                        {{ case.diff_diagnosis }}
+                        {% else %}
+                        -
+                        {% endif %}</p>
 
                     <strong>Uploaded by: </strong>
                     <ul class="list-inline">
