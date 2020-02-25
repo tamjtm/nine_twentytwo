@@ -1,0 +1,26 @@
+{% extends 'base_generic.html' %}
+
+{% block title %}Label Chromosomes{% endblock %}
+
+{% block content %}
+{% if case_list %}
+<div class="container w-75">
+    {% for case in case_list %}
+    <h4 class="mt-3">{{ case.id }}</h4>
+    <hr class="mt-0 mb-2">
+    <div class="row">
+        {% for meta in case.get_metaphases %}
+        <div class="col-4 text-center">
+            <img class="d-block w-100" src="{{ meta.original_image.url }}">
+            <a href="{% url 'retrain' meta.id %}" class="label stretched-link">{{ meta.id }}</a>
+        </div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-dark mt-3 w-75" role="alert">
+    There are no metaphase images for this case.
+</div>
+{% endif %}
+{% endblock %}

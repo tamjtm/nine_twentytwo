@@ -1,5 +1,605 @@
 [
   {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_22A",
+    "fields": {
+      "name": "22A",
+      "metaphase": "HN6302251840_01",
+      "type": 22,
+      "prediction": false,
+      "image": "HN6302251840/HN6302251840_01/22A.jpg",
+      "prob": 98
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_22B",
+    "fields": {
+      "name": "22B",
+      "metaphase": "HN6302251840_01",
+      "type": 22,
+      "prediction": false,
+      "image": "HN6302251840/HN6302251840_01/22B.jpg",
+      "prob": 97
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_9A",
+    "fields": {
+      "name": "9A",
+      "metaphase": "HN6302251840_01",
+      "type": 9,
+      "prediction": false,
+      "image": "HN6302251840/HN6302251840_01/9A.jpg",
+      "prob": 100
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_9B",
+    "fields": {
+      "name": "9B",
+      "metaphase": "HN6302251840_01",
+      "type": 9,
+      "prediction": false,
+      "image": "HN6302251840/HN6302251840_01/9B.jpg",
+      "prob": 100
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_ch1",
+    "fields": {
+      "name": "ch1",
+      "metaphase": "HN6302251840_01",
+      "type": 0,
+      "prediction": null,
+      "image": "HN6302251840/HN6302251840_01/ch1.jpg",
+      "prob": null
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_ch10",
+    "fields": {
+      "name": "ch10",
+      "metaphase": "HN6302251840_01",
+      "type": 0,
+      "prediction": null,
+      "image": "HN6302251840/HN6302251840_01/ch10.jpg",
+      "prob": null
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_ch11",
+    "fields": {
+      "name": "ch11",
+      "metaphase": "HN6302251840_01",
+      "type": 0,
+      "prediction": null,
+      "image": "HN6302251840/HN6302251840_01/ch11.jpg",
+      "prob": null
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_ch12",
+    "fields": {
+      "name": "ch12",
+      "metaphase": "HN6302251840_01",
+      "type": 0,
+      "prediction": null,
+      "image": "HN6302251840/HN6302251840_01/ch12.jpg",
+      "prob": null
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_ch13",
+    "fields": {
+      "name": "ch13",
+      "metaphase": "HN6302251840_01",
+      "type": 0,
+      "prediction": null,
+      "image": "HN6302251840/HN6302251840_01/ch13.jpg",
+      "prob": null
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_ch14",
+    "fields": {
+      "name": "ch14",
+      "metaphase": "HN6302251840_01",
+      "type": 0,
+      "prediction": null,
+      "image": "HN6302251840/HN6302251840_01/ch14.jpg",
+      "prob": null
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_ch15",
+    "fields": {
+      "name": "ch15",
+      "metaphase": "HN6302251840_01",
+      "type": 0,
+      "prediction": null,
+      "image": "HN6302251840/HN6302251840_01/ch15.jpg",
+      "prob": null
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_ch16",
+    "fields": {
+      "name": "ch16",
+      "metaphase": "HN6302251840_01",
+      "type": 0,
+      "prediction": null,
+      "image": "HN6302251840/HN6302251840_01/ch16.jpg",
+      "prob": null
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_ch17",
+    "fields": {
+      "name": "ch17",
+      "metaphase": "HN6302251840_01",
+      "type": 0,
+      "prediction": null,
+      "image": "HN6302251840/HN6302251840_01/ch17.jpg",
+      "prob": null
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_ch18",
+    "fields": {
+      "name": "ch18",
+      "metaphase": "HN6302251840_01",
+      "type": 0,
+      "prediction": null,
+      "image": "HN6302251840/HN6302251840_01/ch18.jpg",
+      "prob": null
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_ch19",
+    "fields": {
+      "name": "ch19",
+      "metaphase": "HN6302251840_01",
+      "type": 0,
+      "prediction": null,
+      "image": "HN6302251840/HN6302251840_01/ch19.jpg",
+      "prob": null
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_ch2",
+    "fields": {
+      "name": "ch2",
+      "metaphase": "HN6302251840_01",
+      "type": 0,
+      "prediction": null,
+      "image": "HN6302251840/HN6302251840_01/ch2.jpg",
+      "prob": null
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_ch20",
+    "fields": {
+      "name": "ch20",
+      "metaphase": "HN6302251840_01",
+      "type": 0,
+      "prediction": null,
+      "image": "HN6302251840/HN6302251840_01/ch20.jpg",
+      "prob": null
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_ch21",
+    "fields": {
+      "name": "ch21",
+      "metaphase": "HN6302251840_01",
+      "type": 0,
+      "prediction": null,
+      "image": "HN6302251840/HN6302251840_01/ch21.jpg",
+      "prob": null
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_ch22",
+    "fields": {
+      "name": "ch22",
+      "metaphase": "HN6302251840_01",
+      "type": 0,
+      "prediction": null,
+      "image": "HN6302251840/HN6302251840_01/ch22.jpg",
+      "prob": null
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_ch23",
+    "fields": {
+      "name": "ch23",
+      "metaphase": "HN6302251840_01",
+      "type": 0,
+      "prediction": null,
+      "image": "HN6302251840/HN6302251840_01/ch23.jpg",
+      "prob": null
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_ch24",
+    "fields": {
+      "name": "ch24",
+      "metaphase": "HN6302251840_01",
+      "type": 0,
+      "prediction": null,
+      "image": "HN6302251840/HN6302251840_01/ch24.jpg",
+      "prob": null
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_ch25",
+    "fields": {
+      "name": "ch25",
+      "metaphase": "HN6302251840_01",
+      "type": 0,
+      "prediction": null,
+      "image": "HN6302251840/HN6302251840_01/ch25.jpg",
+      "prob": null
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_ch26",
+    "fields": {
+      "name": "ch26",
+      "metaphase": "HN6302251840_01",
+      "type": 0,
+      "prediction": null,
+      "image": "HN6302251840/HN6302251840_01/ch26.jpg",
+      "prob": null
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_ch27",
+    "fields": {
+      "name": "ch27",
+      "metaphase": "HN6302251840_01",
+      "type": 0,
+      "prediction": null,
+      "image": "HN6302251840/HN6302251840_01/ch27.jpg",
+      "prob": null
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_ch28",
+    "fields": {
+      "name": "ch28",
+      "metaphase": "HN6302251840_01",
+      "type": 0,
+      "prediction": null,
+      "image": "HN6302251840/HN6302251840_01/ch28.jpg",
+      "prob": null
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_ch29",
+    "fields": {
+      "name": "ch29",
+      "metaphase": "HN6302251840_01",
+      "type": 0,
+      "prediction": null,
+      "image": "HN6302251840/HN6302251840_01/ch29.jpg",
+      "prob": null
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_ch3",
+    "fields": {
+      "name": "ch3",
+      "metaphase": "HN6302251840_01",
+      "type": 0,
+      "prediction": null,
+      "image": "HN6302251840/HN6302251840_01/ch3.jpg",
+      "prob": null
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_ch30",
+    "fields": {
+      "name": "ch30",
+      "metaphase": "HN6302251840_01",
+      "type": 0,
+      "prediction": null,
+      "image": "HN6302251840/HN6302251840_01/ch30.jpg",
+      "prob": null
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_ch31",
+    "fields": {
+      "name": "ch31",
+      "metaphase": "HN6302251840_01",
+      "type": 0,
+      "prediction": null,
+      "image": "HN6302251840/HN6302251840_01/ch31.jpg",
+      "prob": null
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_ch32",
+    "fields": {
+      "name": "ch32",
+      "metaphase": "HN6302251840_01",
+      "type": 0,
+      "prediction": null,
+      "image": "HN6302251840/HN6302251840_01/ch32.jpg",
+      "prob": null
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_ch33",
+    "fields": {
+      "name": "ch33",
+      "metaphase": "HN6302251840_01",
+      "type": 0,
+      "prediction": null,
+      "image": "HN6302251840/HN6302251840_01/ch33.jpg",
+      "prob": null
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_ch34",
+    "fields": {
+      "name": "ch34",
+      "metaphase": "HN6302251840_01",
+      "type": 0,
+      "prediction": null,
+      "image": "HN6302251840/HN6302251840_01/ch34.jpg",
+      "prob": null
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_ch35",
+    "fields": {
+      "name": "ch35",
+      "metaphase": "HN6302251840_01",
+      "type": 0,
+      "prediction": null,
+      "image": "HN6302251840/HN6302251840_01/ch35.jpg",
+      "prob": null
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_ch36",
+    "fields": {
+      "name": "ch36",
+      "metaphase": "HN6302251840_01",
+      "type": 0,
+      "prediction": null,
+      "image": "HN6302251840/HN6302251840_01/ch36.jpg",
+      "prob": null
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_ch37",
+    "fields": {
+      "name": "ch37",
+      "metaphase": "HN6302251840_01",
+      "type": 0,
+      "prediction": null,
+      "image": "HN6302251840/HN6302251840_01/ch37.jpg",
+      "prob": null
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_ch38",
+    "fields": {
+      "name": "ch38",
+      "metaphase": "HN6302251840_01",
+      "type": 0,
+      "prediction": null,
+      "image": "HN6302251840/HN6302251840_01/ch38.jpg",
+      "prob": null
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_ch39",
+    "fields": {
+      "name": "ch39",
+      "metaphase": "HN6302251840_01",
+      "type": 0,
+      "prediction": null,
+      "image": "HN6302251840/HN6302251840_01/ch39.jpg",
+      "prob": null
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_ch4",
+    "fields": {
+      "name": "ch4",
+      "metaphase": "HN6302251840_01",
+      "type": 0,
+      "prediction": null,
+      "image": "HN6302251840/HN6302251840_01/ch4.jpg",
+      "prob": null
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_ch40",
+    "fields": {
+      "name": "ch40",
+      "metaphase": "HN6302251840_01",
+      "type": 0,
+      "prediction": null,
+      "image": "HN6302251840/HN6302251840_01/ch40.jpg",
+      "prob": null
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_ch41",
+    "fields": {
+      "name": "ch41",
+      "metaphase": "HN6302251840_01",
+      "type": 0,
+      "prediction": null,
+      "image": "HN6302251840/HN6302251840_01/ch41.jpg",
+      "prob": null
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_ch42",
+    "fields": {
+      "name": "ch42",
+      "metaphase": "HN6302251840_01",
+      "type": 0,
+      "prediction": null,
+      "image": "HN6302251840/HN6302251840_01/ch42.jpg",
+      "prob": null
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_ch43",
+    "fields": {
+      "name": "ch43",
+      "metaphase": "HN6302251840_01",
+      "type": 0,
+      "prediction": null,
+      "image": "HN6302251840/HN6302251840_01/ch43.jpg",
+      "prob": null
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_ch44",
+    "fields": {
+      "name": "ch44",
+      "metaphase": "HN6302251840_01",
+      "type": 0,
+      "prediction": null,
+      "image": "HN6302251840/HN6302251840_01/ch44.jpg",
+      "prob": null
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_ch45",
+    "fields": {
+      "name": "ch45",
+      "metaphase": "HN6302251840_01",
+      "type": 0,
+      "prediction": null,
+      "image": "HN6302251840/HN6302251840_01/ch45.jpg",
+      "prob": null
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_ch46",
+    "fields": {
+      "name": "ch46",
+      "metaphase": "HN6302251840_01",
+      "type": 0,
+      "prediction": null,
+      "image": "HN6302251840/HN6302251840_01/ch46.jpg",
+      "prob": null
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_ch5",
+    "fields": {
+      "name": "ch5",
+      "metaphase": "HN6302251840_01",
+      "type": 0,
+      "prediction": null,
+      "image": "HN6302251840/HN6302251840_01/ch5.jpg",
+      "prob": null
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_ch6",
+    "fields": {
+      "name": "ch6",
+      "metaphase": "HN6302251840_01",
+      "type": 0,
+      "prediction": null,
+      "image": "HN6302251840/HN6302251840_01/ch6.jpg",
+      "prob": null
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_ch7",
+    "fields": {
+      "name": "ch7",
+      "metaphase": "HN6302251840_01",
+      "type": 0,
+      "prediction": null,
+      "image": "HN6302251840/HN6302251840_01/ch7.jpg",
+      "prob": null
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_ch8",
+    "fields": {
+      "name": "ch8",
+      "metaphase": "HN6302251840_01",
+      "type": 0,
+      "prediction": null,
+      "image": "HN6302251840/HN6302251840_01/ch8.jpg",
+      "prob": null
+    }
+  },
+  {
+    "model": "verification.chromosomeimage",
+    "pk": "HN6302251840_01_ch9",
+    "fields": {
+      "name": "ch9",
+      "metaphase": "HN6302251840_01",
+      "type": 0,
+      "prediction": null,
+      "image": "HN6302251840/HN6302251840_01/ch9.jpg",
+      "prob": null
+    }
+  },
+  {
     "model": "auth.group",
     "pk": 1,
     "fields": {
@@ -34,7 +634,7 @@
     "pk": 1,
     "fields": {
       "password": "pbkdf2_sha256$180000$kMa9bZa8WsKy$VVxdhtfeGT3db4jAEBCCJxbgfdVv1YX3FMt6GK1ILio=",
-      "last_login": "2020-02-19T07:52:09.141Z",
+      "last_login": "2020-02-25T08:00:28.800Z",
       "is_superuser": true,
       "username": "admin",
       "first_name": "",
@@ -52,7 +652,7 @@
     "pk": 2,
     "fields": {
       "password": "pbkdf2_sha256$180000$WswSibwOtZtz$JvNJiqi239W8xuANuQIvbKieyNQt5JcozVeSP9koMOI=",
-      "last_login": "2020-02-19T07:05:35.031Z",
+      "last_login": "2020-02-24T12:32:59.068Z",
       "is_superuser": false,
       "username": "meditech_01",
       "first_name": "",
@@ -92,7 +692,7 @@
     "pk": 4,
     "fields": {
       "password": "pbkdf2_sha256$180000$IdhtyMVmeavT$a0PxSth/SxwCvqJyYcLAPerHAEt21qLoFlzDcnbwY+k=",
-      "last_login": null,
+      "last_login": "2020-02-20T03:32:07.616Z",
       "is_superuser": false,
       "username": "doctor_01",
       "first_name": "",
@@ -169,10 +769,10 @@
   },
   {
     "model": "sessions.session",
-    "pk": "79jza7ipqjayu183rzz2cqpjio8caupz",
+    "pk": "yoweo9gq7h8f0om7yq0o2khefvvu23mr",
     "fields": {
       "session_data": "NTZhYjYyZWFkZmNkMzk3MDk2OWY2MjFkMWZhOGNlODkzZWNhMzBlYjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiIyNmM5MmM2MzAxNjA3NDkyZGE2ODk5ODAzZDExYmZjZjM0ZDk1NGJjIn0=",
-      "expire_date": "2020-03-04T07:52:09.219Z"
+      "expire_date": "2020-03-10T08:00:28.874Z"
     }
   },
   {
@@ -381,6 +981,487 @@
       "object_repr": "meditech_02",
       "action_flag": 2,
       "change_message": "[{\"changed\": {\"fields\": [\"Groups\"]}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 17,
+    "fields": {
+      "action_time": "2020-02-25T08:00:37.504Z",
+      "user": 1,
+      "content_type": 1,
+      "object_id": "HN6302191520",
+      "object_repr": "HN6302191520",
+      "action_flag": 3,
+      "change_message": ""
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 18,
+    "fields": {
+      "action_time": "2020-02-25T08:00:37.677Z",
+      "user": 1,
+      "content_type": 1,
+      "object_id": "HN6302191521",
+      "object_repr": "HN6302191521",
+      "action_flag": 3,
+      "change_message": ""
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 19,
+    "fields": {
+      "action_time": "2020-02-25T08:00:37.747Z",
+      "user": 1,
+      "content_type": 1,
+      "object_id": "HN6302201027",
+      "object_repr": "HN6302201027",
+      "action_flag": 3,
+      "change_message": ""
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 20,
+    "fields": {
+      "action_time": "2020-02-25T08:00:37.821Z",
+      "user": 1,
+      "content_type": 1,
+      "object_id": "HN6302241933",
+      "object_repr": "HN6302241933",
+      "action_flag": 3,
+      "change_message": ""
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 21,
+    "fields": {
+      "action_time": "2020-02-25T08:00:37.909Z",
+      "user": 1,
+      "content_type": 1,
+      "object_id": "HN6302242008",
+      "object_repr": "HN6302242008",
+      "action_flag": 3,
+      "change_message": ""
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 22,
+    "fields": {
+      "action_time": "2020-02-25T08:00:37.976Z",
+      "user": 1,
+      "content_type": 1,
+      "object_id": "HN6302242011",
+      "object_repr": "HN6302242011",
+      "action_flag": 3,
+      "change_message": ""
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 23,
+    "fields": {
+      "action_time": "2020-02-25T08:00:38.053Z",
+      "user": 1,
+      "content_type": 1,
+      "object_id": "HN6302242029",
+      "object_repr": "HN6302242029",
+      "action_flag": 3,
+      "change_message": ""
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 24,
+    "fields": {
+      "action_time": "2020-02-25T08:00:38.131Z",
+      "user": 1,
+      "content_type": 1,
+      "object_id": "HN6302242033",
+      "object_repr": "HN6302242033",
+      "action_flag": 3,
+      "change_message": ""
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 25,
+    "fields": {
+      "action_time": "2020-02-25T08:00:38.208Z",
+      "user": 1,
+      "content_type": 1,
+      "object_id": "HN6302242035",
+      "object_repr": "HN6302242035",
+      "action_flag": 3,
+      "change_message": ""
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 26,
+    "fields": {
+      "action_time": "2020-02-25T08:00:38.285Z",
+      "user": 1,
+      "content_type": 1,
+      "object_id": "HN6302242043",
+      "object_repr": "HN6302242043",
+      "action_flag": 3,
+      "change_message": ""
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 27,
+    "fields": {
+      "action_time": "2020-02-25T08:00:38.363Z",
+      "user": 1,
+      "content_type": 1,
+      "object_id": "HN6302242051",
+      "object_repr": "HN6302242051",
+      "action_flag": 3,
+      "change_message": ""
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 28,
+    "fields": {
+      "action_time": "2020-02-25T08:00:38.424Z",
+      "user": 1,
+      "content_type": 1,
+      "object_id": "HN6302242131",
+      "object_repr": "HN6302242131",
+      "action_flag": 3,
+      "change_message": ""
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 29,
+    "fields": {
+      "action_time": "2020-02-25T08:00:38.513Z",
+      "user": 1,
+      "content_type": 1,
+      "object_id": "HN6302242201",
+      "object_repr": "HN6302242201",
+      "action_flag": 3,
+      "change_message": ""
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 30,
+    "fields": {
+      "action_time": "2020-02-25T08:00:38.701Z",
+      "user": 1,
+      "content_type": 1,
+      "object_id": "HN6302242203",
+      "object_repr": "HN6302242203",
+      "action_flag": 3,
+      "change_message": ""
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 31,
+    "fields": {
+      "action_time": "2020-02-25T08:00:38.922Z",
+      "user": 1,
+      "content_type": 1,
+      "object_id": "HN6302242206",
+      "object_repr": "HN6302242206",
+      "action_flag": 3,
+      "change_message": ""
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 32,
+    "fields": {
+      "action_time": "2020-02-25T08:00:39.049Z",
+      "user": 1,
+      "content_type": 1,
+      "object_id": "HN6302242208",
+      "object_repr": "HN6302242208",
+      "action_flag": 3,
+      "change_message": ""
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 33,
+    "fields": {
+      "action_time": "2020-02-25T08:00:39.139Z",
+      "user": 1,
+      "content_type": 1,
+      "object_id": "HN6302242211",
+      "object_repr": "HN6302242211",
+      "action_flag": 3,
+      "change_message": ""
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 34,
+    "fields": {
+      "action_time": "2020-02-25T08:00:39.248Z",
+      "user": 1,
+      "content_type": 1,
+      "object_id": "HN6302242212",
+      "object_repr": "HN6302242212",
+      "action_flag": 3,
+      "change_message": ""
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 35,
+    "fields": {
+      "action_time": "2020-02-25T08:00:39.337Z",
+      "user": 1,
+      "content_type": 1,
+      "object_id": "HN6302242239",
+      "object_repr": "HN6302242239",
+      "action_flag": 3,
+      "change_message": ""
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 36,
+    "fields": {
+      "action_time": "2020-02-25T08:00:39.437Z",
+      "user": 1,
+      "content_type": 1,
+      "object_id": "HN6302242240",
+      "object_repr": "HN6302242240",
+      "action_flag": 3,
+      "change_message": ""
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 37,
+    "fields": {
+      "action_time": "2020-02-25T08:00:39.541Z",
+      "user": 1,
+      "content_type": 1,
+      "object_id": "HN6302242241",
+      "object_repr": "HN6302242241",
+      "action_flag": 3,
+      "change_message": ""
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 38,
+    "fields": {
+      "action_time": "2020-02-25T08:00:39.630Z",
+      "user": 1,
+      "content_type": 1,
+      "object_id": "HN6302242244",
+      "object_repr": "HN6302242244",
+      "action_flag": 3,
+      "change_message": ""
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 39,
+    "fields": {
+      "action_time": "2020-02-25T08:00:39.708Z",
+      "user": 1,
+      "content_type": 1,
+      "object_id": "HN6302242303",
+      "object_repr": "HN6302242303",
+      "action_flag": 3,
+      "change_message": ""
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 40,
+    "fields": {
+      "action_time": "2020-02-25T08:00:39.780Z",
+      "user": 1,
+      "content_type": 1,
+      "object_id": "HN6302242308",
+      "object_repr": "HN6302242308",
+      "action_flag": 3,
+      "change_message": ""
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 41,
+    "fields": {
+      "action_time": "2020-02-25T08:00:39.869Z",
+      "user": 1,
+      "content_type": 1,
+      "object_id": "HN6302242318",
+      "object_repr": "HN6302242318",
+      "action_flag": 3,
+      "change_message": ""
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 42,
+    "fields": {
+      "action_time": "2020-02-25T08:00:39.979Z",
+      "user": 1,
+      "content_type": 1,
+      "object_id": "HN6302242319",
+      "object_repr": "HN6302242319",
+      "action_flag": 3,
+      "change_message": ""
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 43,
+    "fields": {
+      "action_time": "2020-02-25T08:00:40.145Z",
+      "user": 1,
+      "content_type": 1,
+      "object_id": "HN6302242325",
+      "object_repr": "HN6302242325",
+      "action_flag": 3,
+      "change_message": ""
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 44,
+    "fields": {
+      "action_time": "2020-02-25T08:00:40.269Z",
+      "user": 1,
+      "content_type": 1,
+      "object_id": "HN630242009",
+      "object_repr": "HN630242009",
+      "action_flag": 3,
+      "change_message": ""
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 45,
+    "fields": {
+      "action_time": "2020-02-25T08:00:40.546Z",
+      "user": 1,
+      "content_type": 1,
+      "object_id": "HN630242037",
+      "object_repr": "HN630242037",
+      "action_flag": 3,
+      "change_message": ""
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 46,
+    "fields": {
+      "action_time": "2020-02-25T11:43:46.142Z",
+      "user": 1,
+      "content_type": 1,
+      "object_id": "HN6302251500",
+      "object_repr": "HN6302251500",
+      "action_flag": 3,
+      "change_message": ""
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 47,
+    "fields": {
+      "action_time": "2020-02-25T11:43:46.306Z",
+      "user": 1,
+      "content_type": 1,
+      "object_id": "HN6302251502",
+      "object_repr": "HN6302251502",
+      "action_flag": 3,
+      "change_message": ""
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 48,
+    "fields": {
+      "action_time": "2020-02-25T11:43:46.417Z",
+      "user": 1,
+      "content_type": 1,
+      "object_id": "HN6302251503",
+      "object_repr": "HN6302251503",
+      "action_flag": 3,
+      "change_message": ""
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 49,
+    "fields": {
+      "action_time": "2020-02-25T11:43:46.549Z",
+      "user": 1,
+      "content_type": 1,
+      "object_id": "HN6302251818",
+      "object_repr": "HN6302251818",
+      "action_flag": 3,
+      "change_message": ""
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 50,
+    "fields": {
+      "action_time": "2020-02-25T11:43:46.626Z",
+      "user": 1,
+      "content_type": 1,
+      "object_id": "HN6302251835",
+      "object_repr": "HN6302251835",
+      "action_flag": 3,
+      "change_message": ""
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 51,
+    "fields": {
+      "action_time": "2020-02-25T11:43:46.720Z",
+      "user": 1,
+      "content_type": 1,
+      "object_id": "HN6302251838",
+      "object_repr": "HN6302251838",
+      "action_flag": 3,
+      "change_message": ""
+    }
+  },
+  {
+    "model": "verification.metaphaseimage",
+    "pk": "HN6302251840_01",
+    "fields": {
+      "original_image": "HN6302251840/HN6302251840_01/original.jpg",
+      "case": "HN6302251840",
+      "upload_user": 1,
+      "result": false,
+      "result_image": "HN6302251840/HN6302251840_01/result.jpg"
+    }
+  },
+  {
+    "model": "verification.case",
+    "pk": "HN6302251840",
+    "fields": {
+      "owner": 6,
+      "diff_diagnosis": "",
+      "result": false,
+      "upload_user": 1,
+      "upload_time": "2020-02-25T11:40:42.849Z",
+      "confirm_user": null,
+      "confirm_time": null,
+      "confirm_status": null,
+      "reject_message": null
     }
   }
 ]

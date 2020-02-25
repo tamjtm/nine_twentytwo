@@ -8,7 +8,7 @@ from django.db import models
 from django.db.models import Q
 from django.utils.deconstruct import deconstructible
 
-from verification.detection import *
+from verification.detection import nine_22
 
 
 def to_imagefield(img):

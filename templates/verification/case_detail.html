@@ -130,7 +130,7 @@
                                     <center>
                                     <div class="d-inline-flex">
                                         <h5 class="p-1 mb-1 text-dark text-uppercase">{{ img }}  </h5>
-                                        <h4><span class="ml-1 badge badge-light">{{ img.get_result }}</span></h4>
+                                        <!--                                        <h4><span class="ml-1 badge badge-light">{{ img.get_result }}</span></h4>-->
                                     </div>
                                     </center>
                                         {% if img.result_image and perms.verification.change_case or case.get_status == 'accepted' %}
@@ -151,7 +151,7 @@
                                                                     </div>
                                                                 {% endfor %}
                                                             {% else %}
-                                                                <div class="d-flex flex-column">None</div>
+                                                            <div class="d-flex flex-column">not found</div>
                                                             {% endif %}
                                                         </div>
                                                     </div>
@@ -167,7 +167,7 @@
                                                                     </div>
                                                                 {% endfor %}
                                                             {% else %}
-                                                                <div class="d-flex flex-column">None</div>
+                                                            <div class="d-flex flex-column">not found</div>
                                                             {% endif %}
                                                         </div>
                                                     </div>

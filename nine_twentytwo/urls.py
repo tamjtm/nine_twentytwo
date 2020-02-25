@@ -19,7 +19,8 @@ from django.contrib import admin
 from django.shortcuts import redirect
 from django.urls import path, include
 
-from verification.views import CaseListView, CaseDetailView, CaseUserListView, UploadView
+from verification.views import CaseListView, CaseDetailView, CaseUserListView, UploadView, MetaphaseListView, \
+    MetaphaseDetailView
 
 
 def redirect_root(request):
@@ -34,6 +35,8 @@ urlpatterns = [
     path('mycases/', CaseUserListView.as_view(), name='my-cases'),
     path('case/<str:pk>', CaseDetailView.as_view(), name='case-detail'),
     path('upload/', UploadView.as_view()),
+    path('label/', MetaphaseListView.as_view(), name='label'),
+    path('label/<str:pk>', MetaphaseDetailView.as_view(), name='retrain'),
 ]
 
 if settings.DEBUG:

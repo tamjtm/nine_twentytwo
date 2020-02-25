@@ -9,7 +9,7 @@ from django.shortcuts import redirect
 from django.utils import timezone
 from django.views.generic import ListView, DetailView, CreateView
 
-from verification.models import Case, MetaphaseImage
+from verification.models import Case, MetaphaseImage, ChromosomeImage
 
 
 class CaseListView(LoginRequiredMixin, ListView):
@@ -110,3 +110,25 @@ class UploadView(PermissionRequiredMixin, CreateView):
         print(len(images_list), "imgs =>", timer, "s.")
 
         return redirect('case-detail', pk=case.id)
+
+
+class MetaphaseListView(PermissionRequiredMixin, ListView):
+    model = MetaphaseImage
+    permission_required = 'verification.add_metaphaseimage'
+
+    def get_context_data(self, **kwargs):
+        context = super(MetaphaseListView, self).get_context_data(**kwargs)
+        context['case_list'] = Case.objects.all()
+        return context
+
+
+class MetaphaseDetailView(PermissionRequiredMixin, DetailView):
+    model = MetaphaseImage
+    permission_required = 'verification.add_metaphaseimage'
+
+    def get_context_data(self, **kwargs):
+        context = super(MetaphaseDetailView, self).get_context_data(**kwargs)
+        context['chromosomes'] = ChromosomeImage.objects.filter(
+            Q(name__icontains='ch')
+        )
+        return context
