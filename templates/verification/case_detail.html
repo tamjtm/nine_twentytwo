@@ -5,10 +5,10 @@
 {% block title %}{{ case.id }}{% endblock %}
 
 {% block content %}
-    <div class="row mx-2 mt-2">
+<div class="row mx-2 mt-2" style="color: #555D60;">
         <div class="col-3">
-            <div class="card border-info mt-3">
-                <h2 class="card-header text-white bg-info">{{ case.id }}</h2>
+            <div class="card mt-3" style="border-color: #D76C5E;">
+                <h2 class="card-header text-white" style="background-color: #D76C5E;">{{ case.id }}</h2>
                 <div class="card-body">
                     <p><strong>Physician: </strong>{{ case.owner }}</p>
 
@@ -40,22 +40,28 @@
                         <!--  Interpretation For Case  -->
                         {% if perms.verification.change_case or case.get_status == 'accepted' %}
                             {% if case.result == 0 %}
-                                <h5 class="text-success">No Philadelphia Abnormality is detected</h5>
+                        <h5 class="text-success"> No Philadelphia Abnormality is detected</h5>
                             {% elif case.result == 1 %}
                                 <h5 class="text-danger">Philadelphia Abnormality is possible</h5>
                             {% else %}
                                 <h5 class="text-warning">This metaphase image can't be detected</h5>
                             {% endif %}
+                        {% else %}
+                        <h5 class="text-warning">Detection results are rejected</h5>
                         {% endif %}
                     </div>
 
                     <!--  Verification Button (Accept&Reject)  -->
                     {% if perms.verification.change_case %}
-                    <form method="post" class="mt-4 text-center" id="confirm-form">
+                    <form method="post" class="mt-3 text-center" id="confirm-form">
                         {% csrf_token %}
                         <input type="hidden" name="id" value="{{ case.id }}">
-                        <button type="submit" value="accept" name="result" class="btn btn-success">Accept</button>
-                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModal">Reject</button>
+                        <button type="submit" value="accept" name="result" class="btn btn-success"><i
+                                class="fas fa-check-circle"></i> Accept
+                        </button>
+                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModal"><i
+                                class="fas fa-times-circle"></i> Reject
+                        </button>
 
                         <!--    Modal    -->
                         <div class="modal fade" tabindex="-1" role="dialog" id="myModal">
@@ -87,7 +93,9 @@
                                     </div>
                                     <!--  Model Footer  -->
                                     <div class="modal-footer">
-                                        <button type="submit" value="reject" name="result" class="btn btn-primary">Submit</button>
+                                        <button type="submit" value="reject" name="result" class="btn btn-primary"><i
+                                                class="fas fa-paper-plane"></i> Submit
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -96,17 +104,15 @@
                     {% endif %}
                 </div>
             </div>
+            {% if case.reject_message %}
+            <div class="alert alert-danger mt-2 w-100" role="alert">
+                <i class="fas fa-comment-medical"></i> {{ case.reject_message }}
+            </div>
+            {% endif %}
         </div>
         <div class="col-9">
             <!-- Rejection Message -->
             {% if perms.verification.change_case or case.get_status != 'waiting' %}
-            {% if case.reject_message %}
-            <center>
-            <div class="alert alert-danger mt-3 w-75" role="alert">
-                {{ case.reject_message }}
-            </div>
-            </center>
-            {% endif %}
 
             <!--  Metaphase Images  -->
                 {% if case.get_metaphases %}
@@ -120,7 +126,7 @@
                                 {% endif %}
                             {% endfor %}
                         </ol>
-                        <div class="carousel-inner mt-4">
+                        <div class="carousel-inner mt-3 rounded p-3 bg-white">
                             {% for img in case.get_metaphases %}
                                 {% if forloop.counter == 1 %}
                                 <div class="carousel-item active">
@@ -139,8 +145,10 @@
                                                     <img class="d-block w-100" src="{{ img.result_image.url }}">
                                                 </div>
                                                 <div class="col-5">
-                                                    <div class="card mt-1 d-flex border-dark text-center">
-                                                        <strong class="card-header p-1 text-center text-white bg-dark">Chromosome 9</strong>
+                                                    <div class="card mt-1 d-flex text-center"
+                                                         style="border-color: #FCC046;">
+                                                        <strong class="card-header p-1 text-center text-white"
+                                                                style="background-color: #FCC046;">Chromosome 9</strong>
                                                         <div class="card-body d-inline-flex justify-content-center">
                                                             {% if img.get_chromosome9 %}
                                                                 {% for ch in img.get_chromosome9 %}
@@ -155,8 +163,11 @@
                                                             {% endif %}
                                                         </div>
                                                     </div>
-                                                    <div class="card mt-1 d-flex border-dark text-center">
-                                                        <strong class="card-header p-1 text-center text-white bg-dark">Chromosome 22</strong>
+                                                    <div class="card mt-1 d-flex text-center"
+                                                         style="border-color: #FCC046;">
+                                                        <strong class="card-header p-1 text-center text-white"
+                                                                style="background-color: #FCC046;">Chromosome
+                                                            22</strong>
                                                         <div class="card-body d-inline-flex justify-content-center">
                                                             {% if img.get_chromosome22 %}
                                                                 {% for ch in img.get_chromosome22 %}
@@ -173,35 +184,36 @@
                                                     </div>
                                                 </div>
                                             </div>
-
                                         {% else %}
-                                            <img class="d-block w-100" src="{{ img.original_image.url }}">
+                                    <center>
+                                        <img class="d-block w-50" src="{{ img.original_image.url }}">
+                                    </center>
                                         {% endif %}
                                 </div>
                                 {% endfor %}
                                 </div>
-
                         </div>
-                        <center class="mt-4 mb-2">
+                        <center class="mt-4 mb-2 ">
                             <a href="#carouselExampleIndicators" class="btn btn-dark btn-sm" role="button" data-slide="prev">
-                                Previous
+                                <i class="fas fa-chevron-left"></i> Previous
                             </a>
                             <a href="#carouselExampleIndicators" class="btn btn-dark btn-sm" role="button" data-slide="next">
-                                Next
+                                Next <i class="fas fa-chevron-right"></i>
                             </a>
                         </center>
                     </div>
                 {% else %}
                     <center>
                     <div class="alert alert-dark mt-3 w-75" role="alert">
-                        There are no metaphase images for this case.
+                        <i class="fas fa-box-open"></i> There are no metaphase images for this case.
                     </div>
                     </center>
                 {% endif %}
             {% else %}
                 <center>
                 <div class="alert alert-warning mt-3 w-75" role="alert">
-                    Detection results have not been verified by medical technician.
+                    <i class="fas fa-exclamation-triangle"></i> Detection results have not been verified by medical
+                    technician.
                 </div>
                 </center>
             {% endif %}

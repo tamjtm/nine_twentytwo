@@ -10,40 +10,30 @@
     {% if next %}
         {% if user.is_authenticated %}
             <div class="alert alert-warning mt-3 w-50 mx-auto" role="alert">
-                Sorry. Your account doesn't have access to this page.
+                <i class="fas fa-exclamation-triangle"></i> Sorry. Your account doesn't have access to this page.
             </div>
         {% else %}
             <div class="alert alert-warning mt-3 w-50 mx-auto" role="alert">
-                Please login to see this page.
-            </div>
-            <div class="border rounded mt-3 mx-auto" style="width: 400px;">
-                <h3 class="mt-3 text-primary text-center">Login</h3>
-                <h5 class="mb-3 text-secondary text-center">Continue to 9-22</h5>
-                <hr class="mt-0 mb-4">
-                <form method="post" action="{% url 'login' %}" class="form-group mx-5 my-3">
-                    {% csrf_token %}
-                    {{ form|crispy }}
-                    <center>
-                        <button type="submit" class="btn btn-outline-info mt-2 mb-1">Login</button>
-                        <input type="hidden" name="next" value="{{ next }}">
-                    </center>
-                </form>
+                <i class="fas fa-exclamation-triangle"></i> Please login to see this page.
             </div>
         {% endif %}
     {% else %}
-    <div class="border rounded mt-5 mx-auto" style="width: 400px;">
-        <h3 class="mt-3 text-primary text-center">Login</h3>
+<div class="d-flex mt-5"></div>
+{% endif %}
+<div class="border rounded mt-3 mx-auto bg-white" style="width: 400px; color: #555D60;">
+    <h3 class="mt-3 text-center" style="color: #2FBECD;">Login</h3>
         <h5 class="mb-3 text-secondary text-center">Continue to 9-22</h5>
         <hr class="mt-0 mb-4">
         <form method="post" action="{% url 'login' %}" class="form-group mx-5 my-3">
             {% csrf_token %}
             {{ form|crispy }}
             <center>
-                <button type="submit" class="btn btn-outline-info mt-2 mb-1">Login</button>
+                <button type="submit" class="btn btn-outline-info mt-2 mb-1"><i class="fas fa-sign-in-alt"></i> Login
+                </button>
                 <input type="hidden" name="next" value="{{ next }}">
                 <p><a href="{% url 'password_reset' %}" class="text-info">Forget password?</a></p>
             </center>
         </form>
     </div>
-    {% endif %}
+
 {% endblock %}

@@ -3,18 +3,18 @@
 {% block title %}9-22{% endblock %}
 
 {% block content %}
-<div class="text-center" style="height: 70px;">
+<div class="text-center" style="height: 70px; color: #555D60;">
     {% if request.path == '/mycases/' %}
-        <h1 class="mt-3 mb-2">My Cases</h1>
+    <h1 class="mt-3 mb-2" style="color: #2FBECD;">My Cases</h1>
     {% elif keyword %}
-        <h2 class="mt-3 mb-2">Search result for '{{ keyword }}'</h2>
+    <h2 class="mt-3 mb-2" style="color: #D76C5E;">Search result for '{{ keyword }}'</h2>
     {% else %}
-        <h1 class="mt-3 mb-2">Cases List</h1>
+    <h1 class="mt-3 mb-2" style="color: #2FBECD;">Cases List</h1>
     {% endif %}
 </div>
 <center>
 {% if case_list %}
-    <table class="table table-hover text-center w-75">
+    <table class="table table-hover text-center w-75 rounded p-3 bg-white" style="color: #555D60;">
         <thead>
         <tr>
             <th>Status</th>
@@ -30,11 +30,11 @@
         <tr>
             <td>
                 {% if case.get_status == 'accepted' %}
-                <p class="text-success">{{ case.get_status }}</p>
+                <p class="text-success"><i class="fas fa-check-circle"></i></p>
                 {% elif case.get_status == 'rejected' %}
-                <p class="text-danger">{{ case.get_status }}</p>
+                <p class="text-danger"><i class="fas fa-times-circle"></i></p>
                 {% else %}
-                <p class="text-warning">{{ case.get_status }}</p>
+                <p class="text-warning"><i class="fas fa-clock"></i></p>
                 {% endif %}
             </td>
             <td>
@@ -66,11 +66,11 @@
     </table>
 {% elif keyword %}
     <div class="alert alert-dark text-center" role="alert" style="width: 500px;">
-        Cases not found.
+        <i class="fas fa-search-minus"></i> Cases not found.
     </div>
 {% else %}
     <div class="alert alert-dark text-center" role="alert" style="width: 500px;">
-        There is no any case.
+        <i class="fas fa-box-open"></i> There is no any case.
     </div>
 {% endif %}
 </center>

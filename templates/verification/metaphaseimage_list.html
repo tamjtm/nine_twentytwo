@@ -3,24 +3,27 @@
 {% block title %}Label Chromosomes{% endblock %}
 
 {% block content %}
+<div class=" w-75 mt-3 mx-auto" style="height: 70px; color: #2FBECD;">
+    <h1>Label Chromosomes</h1>
+    <hr class="my-0">
+</div>
 {% if case_list %}
-<div class="container w-75">
     {% for case in case_list %}
-    <h4 class="mt-3">{{ case.id }}</h4>
-    <hr class="mt-0 mb-2">
-    <div class="row">
+<div class="card rounded w-75 mb-3 mx-auto" style="border-color: #FCC046;">
+    <h4 class="card-header text-white" style="background-color: #FCC046;">{{ case.id }}</h4>
+    <div class="card-body row">
         {% for meta in case.get_metaphases %}
         <div class="col-4 text-center">
             <img class="d-block w-100" src="{{ meta.original_image.url }}">
-            <a href="{% url 'retrain' meta.id %}" class="label stretched-link">{{ meta.id }}</a>
+            <a href="{% url 'retrain' meta.id %}" class="label stretched-link" style="color: #555D60;">{{ meta.id }}</a>
         </div>
         {% endfor %}
     </div>
+    </div>
     {% endfor %}
-</div>
 {% else %}
 <div class="alert alert-dark mt-3 w-75" role="alert">
-    There are no metaphase images for this case.
+    <i class="fas fa-box-open"></i> There is no metaphase image.
 </div>
 {% endif %}
 {% endblock %}
