@@ -26,7 +26,7 @@
                     </ul>
 
                     <strong>Verified by: </strong>
-                    {% if case.get_status != 'waiting' %}
+                    {% if case.confirm_status %}
                     <ul class="list-inline">
                         <li class="list-inline-item">{{ case.confirm_user }}</li>
                         <li class="list-inline-item text-muted">({{ case.confirm_time }})</li>
@@ -38,16 +38,27 @@
                     <div class="mt-3">
                         <strong>Result: </strong>
                         <!--  Interpretation For Case  -->
-                        {% if perms.verification.change_case or case.get_status == 'accepted' %}
+                        {% if perms.verification.change_case or case.confirm_status == 1 %}
                             {% if case.result == 0 %}
                         <h5 class="text-success"> No Philadelphia Abnormality is detected</h5>
                             {% elif case.result == 1 %}
-                                <h5 class="text-danger">Philadelphia Abnormality is possible</h5>
+                        <h5 class="text-danger">Philadelphia Abnormality is possible ({{ case.percentage }}%)</h5>
                             {% else %}
                                 <h5 class="text-warning">This metaphase image can't be detected</h5>
                             {% endif %}
-                        {% else %}
+                        {% if not perms.verification.change_case and perms.verification.view_case%}
+                        <form method="post" class="text-right" id="recheck-form">
+                            {% csrf_token %}
+                            <input type="hidden" name="id" value="{{ case.id }}">
+                            <button type="submit" name="recheck" value=True class="btn btn-light btn-sm"><i
+                                    class="fas fa-redo-alt"></i> Recheck
+                            </button>
+                        </form>
+                        {% endif %}
+                        {% elif case.confirm_status == 0 %}
                         <h5 class="text-warning">Detection results are rejected</h5>
+                        {% else %}
+                        <h5 class="text-warning">Verification on pending</h5>
                         {% endif %}
                     </div>
 
@@ -104,7 +115,7 @@
                     {% endif %}
                 </div>
             </div>
-            {% if case.reject_message %}
+            {% if perms.verification.change_case and case.reject_message %}
             <div class="alert alert-danger mt-2 w-100" role="alert">
                 <i class="fas fa-comment-medical"></i> {{ case.reject_message }}
             </div>
@@ -112,7 +123,7 @@
         </div>
         <div class="col-9">
             <!-- Rejection Message -->
-            {% if perms.verification.change_case or case.get_status != 'waiting' %}
+            {% if perms.verification.change_case or case.confirm_status %}
 
             <!--  Metaphase Images  -->
                 {% if case.get_metaphases %}
@@ -135,11 +146,16 @@
                                 {% endif %}
                                     <center>
                                     <div class="d-inline-flex">
-                                        <h5 class="p-1 mb-1 text-dark text-uppercase">{{ img }}  </h5>
-                                        <!--                                        <h4><span class="ml-1 badge badge-light">{{ img.get_result }}</span></h4>-->
+                                        {% if perms.verification.change_case %}
+                                        <a href="{% url 'retrain' img.id %}"
+                                           class="h5 p-1 mb-1 text-dark text-uppercase">{{ img }}</a>
+                                        {% else %}
+                                        <h5 class="p-1 mb-1 text-dark text-uppercase">{{ img }}</h5>
+                                        {% endif %}
                                     </div>
                                     </center>
-                                        {% if img.result_image and perms.verification.change_case or case.get_status == 'accepted' %}
+                                    {% if img.result_image and perms.verification.change_case or case.confirm_status ==
+                                    1 %}
                                             <div class="row">
                                                 <div class="col-7 text-center">
                                                     <img class="d-block w-100" src="{{ img.result_image.url }}">
@@ -155,7 +171,11 @@
                                                                     <div class="d-flex flex-column">
                                                                         <strong style="color: red;">{{ ch.name }}</strong>
                                                                         <img src="{{ ch.image.url }}">
-                                                                        <small>{% if ch.get_prediction == 'PH' %}<strong>{% endif %}{{ ch.get_prediction }}{% if ch.get_prediction == 'PH' %}</strong>{% endif %}-{{ ch.prob }}%</small>
+                                                                        <small>{% if ch.get_prediction == 'DER'
+                                                                            %}<strong>{% endif %}{{ ch.get_prediction
+                                                                                }}{% if ch.get_prediction == 'DER'
+                                                                                %}</strong>{% endif %}-{{ ch.prob
+                                                                            }}%</small>
                                                                     </div>
                                                                 {% endfor %}
                                                             {% else %}
@@ -210,14 +230,17 @@
                     </center>
                 {% endif %}
             {% else %}
-                <center>
-                <div class="alert alert-warning mt-3 w-75" role="alert">
-                    <i class="fas fa-exclamation-triangle"></i> Detection results have not been verified by medical
-                    technician.
-                </div>
-                </center>
+            {% if case.reject_message %}
+            <div class="alert alert-danger mt-2 w-75 mx-auto text-center" role="alert">
+                <i class="fas fa-comment-medical"></i> {{ case.reject_message }}
+            </div>
+            {% else %}
+            <div class="alert alert-warning mt-3 w-75 mx-auto text-center" role="alert">
+                <i class="fas fa-exclamation-triangle"></i> Detection results have not been verified by medical
+                technician.
+            </div>
             {% endif %}
-
+            {% endif %}
         </div>
     </div>
 {% endblock %}

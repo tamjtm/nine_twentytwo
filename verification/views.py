@@ -59,6 +59,8 @@ class CaseDetailView(LoginRequiredMixin, DetailView):
         elif request.POST.get('result') == "reject":
             instance.confirm_status = False
             instance.reject_message = request.POST.get('message')
+        elif request.POST.get('recheck'):
+            instance.confirm_status = None
         instance.confirm_time = timezone.now()
         instance.confirm_user = request.user
         instance.save()
@@ -85,16 +87,14 @@ class UploadView(PermissionRequiredMixin, CreateView):
         else:
             owner_list = User.objects.filter(groups__name='Doctor')
             count = owner_list.count()
-
             if count > 0:
                 random_index = randint(0, count-1)
                 owner = owner_list[random_index]
             else:
                 owner = request.user
-
             case = Case(id=request.POST.get('id'), owner=owner,
                         diff_diagnosis=request.POST.get('diff_diagnosis'), upload_user=user)
-            case.save(flag=False)
+            case.save()
 
         start = time.time()
         images_list = request.FILES.getlist('images')
@@ -104,7 +104,7 @@ class UploadView(PermissionRequiredMixin, CreateView):
             image.save()
 
         case.confirm_status = None
-        case.save()
+        case.save(flag=True)
         end = time.time()
         timer = int(end-start)
         print(len(images_list), "imgs =>", timer, "s.")

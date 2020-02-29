@@ -23,6 +23,7 @@ class Case(models.Model):
     owner = models.ForeignKey(User, verbose_name="Physician", related_name='own', on_delete=models.SET_NULL, null=True)
     diff_diagnosis = models.CharField(max_length=100, verbose_name="Differential Diagnosis", null=True, blank=True)
     result = models.BooleanField(null=True, blank=True)
+    percentage = models.IntegerField(null=True, blank=True)
     upload_user = models.ForeignKey(User, related_name='upload', on_delete=models.SET_NULL, null=True)
     upload_time = models.DateTimeField(auto_now_add=True)
     confirm_user = models.ForeignKey(User, related_name='confirm', on_delete=models.SET_NULL, null=True, blank=True)
@@ -35,15 +36,6 @@ class Case(models.Model):
 
     def __str__(self):
         return self.id
-
-    @property
-    def get_status(self):
-        if self.confirm_status == 1:
-            return 'accepted'
-        elif self.confirm_status == 0:
-            return 'rejected'
-        else:
-            return 'waiting'
 
     @property
     def get_metaphases(self):
@@ -94,6 +86,9 @@ class Case(models.Model):
         print('...detection finished')
         print('---------------------------')
         print("ph detection result:", meta_result)
+
+        self.percentage = sum(result for result in meta_result) / len(meta_result) * 100
+
         if 1 in meta_result:
             return True
         elif 0 in meta_result:
@@ -101,7 +96,7 @@ class Case(models.Model):
         else:
             return None
 
-    def save(self, flag=True, *args, **kwargs):
+    def save(self, flag=False, *args, **kwargs):
         if self.get_new_metaphases is not None and flag:
             self.result = self.predict()
             self.save(flag=False, *args, **kwargs)
@@ -191,6 +186,8 @@ class ChromosomeImage(models.Model):
     def get_prediction(self):
         if self.prediction == 0:
             return "NM"
-        elif self.prediction == 1:
+        elif self.prediction == 1 and self.type == 9:
+            return "DER"
+        elif self.prediction == 1 and self.type == 22:
             return "PH"
         return "None"
