@@ -30,12 +30,12 @@
     </center>
 <!--    <button type="button" class="btn btn-primary" id="btn-upload">Upload</button>-->
     <script>
+        $('#progressbar').hide();
         $(document).ready(function(){
           $("#btn-upload").click(function(){
             $('form').submit(function()
             {
                 $('#progressbar').show();
-                $('#progress-title').text({{ message }})
             })
           });
         });

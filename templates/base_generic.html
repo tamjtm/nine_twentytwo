@@ -5,14 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <style type="text/css">
-        .page-holder {
-          min-height: 100vh;
-        }
-
-        .bg-cover {
-          background-size: cover !important;
-        }
-
+        <!-- metaphases image -->
         .carousel .carousel-indicators li {
           background-color: #fff;
           background-color: rgba(70, 70, 70, 0.25);
@@ -22,12 +15,21 @@
           background-color: #444;
         }
 
+        <!-- upload form -->
         .form-group>label{
             font-weight: bold;
         }
 
-        #progressbar {
+        <!-- edit & delete button -->
+        .i {
           display: none;
+        }
+        table#case-list tr td i.link {
+            display:none;
+        }
+        table#case-list tr:hover td i.link {
+            display:inline-block;
+            color: #555D60;
         }
     </style>
 
@@ -48,7 +50,7 @@
 <body style="background-color: #F0F0F2;">
 
     {% block navbar %}
-    <nav class="navbar fixed-top navbar-expand-lg navbar-light" style="background-color: #2FBECD;">
+    <nav class="navbar fixed-top navbar-expand-lg navbar-light py-1" style="background-color: #2FBECD;">
         {% if user.is_authenticated %}
         <a class="navbar-brand" href="{% url 'index' %}">9-22</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#myNavbar" aria-controls="myNavbar" aria-expanded="false" aria-label="Toggle navigation">

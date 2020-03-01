@@ -30,6 +30,7 @@ class Case(models.Model):
     confirm_time = models.DateTimeField(null=True, blank=True)
     confirm_status = models.BooleanField(null=True, blank=True)
     reject_message = models.CharField(max_length=200, null=True, blank=True)
+    recheck_message = models.CharField(max_length=200, null=True, blank=True)
 
     class Meta:
         ordering = ('id', 'upload_time',)

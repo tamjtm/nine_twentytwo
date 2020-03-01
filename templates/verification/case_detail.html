@@ -5,10 +5,10 @@
 {% block title %}{{ case.id }}{% endblock %}
 
 {% block content %}
-<div class="row mx-2 mt-2" style="color: #555D60;">
+<div class="row mx-2 mt-3" style="color: #555D60;">
         <div class="col-3">
-            <div class="card mt-3" style="border-color: #D76C5E;">
-                <h2 class="card-header text-white" style="background-color: #D76C5E;">{{ case.id }}</h2>
+            <div class="card" style="border-color: #D76C5E;">
+                <h2 class="card-header text-white p-1 text-center" style="background-color: #D76C5E;">{{ case.id }}</h2>
                 <div class="card-body">
                     <p><strong>Physician: </strong>{{ case.owner }}</p>
 
@@ -26,7 +26,7 @@
                     </ul>
 
                     <strong>Verified by: </strong>
-                    {% if case.confirm_status %}
+                    {% if case.confirm_status == 0 or case.confirm_status == 1 %}
                     <ul class="list-inline">
                         <li class="list-inline-item">{{ case.confirm_user }}</li>
                         <li class="list-inline-item text-muted">({{ case.confirm_time }})</li>
@@ -34,8 +34,8 @@
                     {% else %}
                     <p>-</p>
                     {% endif %}
-                    <hr class="mt-4 mb-4">
-                    <div class="mt-3">
+                    <hr class="mt-3 mb-3">
+                    <div class="mt-2">
                         <strong>Result: </strong>
                         <!--  Interpretation For Case  -->
                         {% if perms.verification.change_case or case.confirm_status == 1 %}
@@ -50,9 +50,50 @@
                         <form method="post" class="text-right" id="recheck-form">
                             {% csrf_token %}
                             <input type="hidden" name="id" value="{{ case.id }}">
-                            <button type="submit" name="recheck" value=True class="btn btn-light btn-sm"><i
-                                    class="fas fa-redo-alt"></i> Recheck
+                            <button type="button" name="recheck" class="btn btn-light btn-sm" data-toggle="modal"
+                                    data-target="#recheckModal">
+                                <i class="fas fa-redo-alt"></i> Recheck
                             </button>
+
+                            <!--    Recheck Modal    -->
+                            <div class="modal fade border-light" tabindex="-1" role="dialog" id="recheckModal">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <!--  Model Header  -->
+                                        <div class="modal-header">
+                                            <h4 class="modal-title">Rechecking Message</h4>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <!--  Model Body  -->
+                                        <div class="modal-body">
+                                            <div class="{% if form.non_field_errors %}invalid{% endif %} mb-2">
+                                                {% for error in form.non_field_errors %}
+                                                {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                            <div class="form-group">
+                                                <textarea form="recheck-form" class="form-control align-top"
+                                                          name="message" rows="5"></textarea>
+
+                                                <div class="{% if field.errors %} invalid{% endif %}">
+                                                    {% for error in field.errors %}
+                                                    <p class="help-block">{{ error }}</p>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--  Model Footer  -->
+                                        <div class="modal-footer">
+                                            <button type="submit" value="recheck" name="result" class="btn btn-primary">
+                                                <i
+                                                        class="fas fa-paper-plane"></i> Submit
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </form>
                         {% endif %}
                         {% elif case.confirm_status == 0 %}
@@ -70,12 +111,12 @@
                         <button type="submit" value="accept" name="result" class="btn btn-success"><i
                                 class="fas fa-check-circle"></i> Accept
                         </button>
-                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModal"><i
+                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#rejectModel"><i
                                 class="fas fa-times-circle"></i> Reject
                         </button>
 
-                        <!--    Modal    -->
-                        <div class="modal fade" tabindex="-1" role="dialog" id="myModal">
+                        <!--    Reject Modal    -->
+                        <div class="modal fade border-danger" tabindex="-1" role="dialog" id="rejectModel">
                             <div class="modal-dialog" role="document">
                                 <div class="modal-content">
                                     <!--  Model Header  -->
@@ -93,7 +134,8 @@
                                             {% endfor %}
                                         </div>
                                         <div class="form-group">
-                                            <textarea form="confirm-form" class="form-control align-top" name="message" rows="5"></textarea>
+                                            <textarea form="confirm-form" class="form-control align-top" name="message"
+                                                      rows="5"></textarea>
 
                                             <div class="{% if field.errors %} invalid{% endif %}">
                                                 {% for error in field.errors %}
@@ -120,6 +162,11 @@
                 <i class="fas fa-comment-medical"></i> {{ case.reject_message }}
             </div>
             {% endif %}
+            {% if perms.verification.change_case and case.recheck_message %}
+            <div class="alert alert-light mt-2 w-100" role="alert">
+                <i class="fas fa-comment-medical"></i> {{ case.recheck_message }}
+            </div>
+            {% endif %}
         </div>
         <div class="col-9">
             <!-- Rejection Message -->
@@ -137,7 +184,7 @@
                                 {% endif %}
                             {% endfor %}
                         </ol>
-                        <div class="carousel-inner mt-3 rounded p-3 bg-white">
+                        <div class="carousel-inner rounded p-3 bg-white">
                             {% for img in case.get_metaphases %}
                                 {% if forloop.counter == 1 %}
                                 <div class="carousel-item active">
@@ -146,11 +193,10 @@
                                 {% endif %}
                                     <center>
                                     <div class="d-inline-flex">
+                                        <h5 class="p-1 mb-1 text-dark text-uppercase">{{ img }}</h5>
                                         {% if perms.verification.change_case %}
                                         <a href="{% url 'retrain' img.id %}"
-                                           class="h5 p-1 mb-1 text-dark text-uppercase">{{ img }}</a>
-                                        {% else %}
-                                        <h5 class="p-1 mb-1 text-dark text-uppercase">{{ img }}</h5>
+                                           class="h5 p-1 mb-1 text-dark text-uppercase"><i class="fas fa-tag"></i></a>
                                         {% endif %}
                                     </div>
                                     </center>
@@ -170,12 +216,19 @@
                                                                 {% for ch in img.get_chromosome9 %}
                                                                     <div class="d-flex flex-column">
                                                                         <strong style="color: red;">{{ ch.name }}</strong>
-                                                                        <img src="{{ ch.image.url }}">
-                                                                        <small>{% if ch.get_prediction == 'DER'
-                                                                            %}<strong>{% endif %}{{ ch.get_prediction
-                                                                                }}{% if ch.get_prediction == 'DER'
-                                                                                %}</strong>{% endif %}-{{ ch.prob
-                                                                            }}%</small>
+                                                                        <img src="{{ ch.image.url }}" class="ch-9"
+                                                                             id="{{ ch.id }}-9"
+                                                                             style="transform: rotate(0deg)">
+                                                                        <small>
+                                                                            {% if ch.get_prediction == 'DER' %}
+                                                                            <strong>
+                                                                                {% endif %}
+                                                                                {{ ch.get_prediction }}
+                                                                                {% if ch.get_prediction == 'DER'%}
+                                                                            </strong>
+                                                                            {% endif %}
+                                                                            -{{ ch.prob}}%
+                                                                        </small>
                                                                     </div>
                                                                 {% endfor %}
                                                             {% else %}
@@ -193,7 +246,9 @@
                                                                 {% for ch in img.get_chromosome22 %}
                                                                     <div class="d-flex flex-column">
                                                                         <strong style="color: blue;">{{ ch.name }}</strong>
-                                                                        <img src="{{ ch.image.url }}">
+                                                                        <img src="{{ ch.image.url }}" class="ch-22 my-1"
+                                                                             id="{{ ch.id }}-22"
+                                                                             style="height: 90%; width: 90%; transform: rotate(0deg);">
                                                                         <small>{% if ch.get_prediction == 'PH' %}<strong>{% endif %}{{ ch.get_prediction }}{% if ch.get_prediction == 'PH' %}</strong>{% endif %}-{{ ch.prob}}%</small>
                                                                     </div>
                                                                 {% endfor %}
@@ -230,12 +285,19 @@
                     </center>
                 {% endif %}
             {% else %}
-            {% if case.reject_message %}
+            {% if case.confirm_status == 0 %}
+            {% if case.recheck_message %}
             <div class="alert alert-danger mt-2 w-75 mx-auto text-center" role="alert">
                 <i class="fas fa-comment-medical"></i> {{ case.reject_message }}
             </div>
             {% else %}
-            <div class="alert alert-warning mt-3 w-75 mx-auto text-center" role="alert">
+            <div class="alert alert-danger mt-2 w-75 mx-auto text-center" role="alert">
+                <i class="fas fa-exclamation-triangle"></i> Detection results have been rejected by medical
+                technician.
+            </div>
+            {% endif %}
+            {% else %}
+            <div class="alert alert-warning mt-2 w-75 mx-auto text-center" role="alert">
                 <i class="fas fa-exclamation-triangle"></i> Detection results have not been verified by medical
                 technician.
             </div>
@@ -243,4 +305,22 @@
             {% endif %}
         </div>
     </div>
+<script>
+    $(document).ready(function(){
+        var deg_9 = 0;
+        $(".ch-9").click(function(){
+        deg_9 = deg_9 + 180;
+        document.getElementById(this.id).style.transform = `rotate(${deg_9}deg)`;
+        });
+    });
+
+    $(document).ready(function(){
+        var deg_22 = 0;
+        $(".ch-22").click(function(){
+        deg_22 = deg_22 + 45;
+        document.getElementById(this.id).style.transform = `rotate(${deg_22}deg)`;
+        });
+    });
+
+</script>
 {% endblock %}

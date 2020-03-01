@@ -56,13 +56,20 @@ class CaseDetailView(LoginRequiredMixin, DetailView):
         if request.POST.get('result') == "accept":
             instance.confirm_status = True
             instance.reject_message = None
+            instance.recheck_message = None
+            instance.confirm_time = timezone.now()
+            instance.confirm_user = request.user
         elif request.POST.get('result') == "reject":
             instance.confirm_status = False
+            instance.recheck_message = None
             instance.reject_message = request.POST.get('message')
-        elif request.POST.get('recheck'):
+            instance.confirm_time = timezone.now()
+            instance.confirm_user = request.user
+        elif request.POST.get('result') == "recheck":
             instance.confirm_status = None
-        instance.confirm_time = timezone.now()
-        instance.confirm_user = request.user
+            instance.recheck_message = request.POST.get('message')
+            instance.confirm_user = None
+            instance.confirm_time = None
         instance.save()
         return redirect('index')
 
