@@ -39,7 +39,7 @@
 
     {% block navbar %}
     <nav class="navbar fixed-top navbar-expand-lg navbar-light py-1" style="background-color: #2FBECD;">
-        {% if user.is_authenticated %}
+    {% if user.is_authenticated %}
         <a class="navbar-brand" href="{% url 'index' %}">9-22</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#myNavbar" aria-controls="myNavbar" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -82,7 +82,7 @@
         </div>
         {% else %}
         <a class="navbar-brand text-uppercase" href="/allcases">Nine-Twentytwo</a>
-        {% endif %}
+    {% endif %}
     </nav>
     {% endblock %}
 

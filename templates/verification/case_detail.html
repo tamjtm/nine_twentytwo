@@ -40,7 +40,7 @@
                         <!--  Interpretation For Case  -->
                         {% if perms.verification.change_case or case.confirm_status == 1 %}
                             {% if case.result == 0 %}
-                            <h5 class="text-success"> No Philadelphia Abnormality is detected</h5>
+                            <h5 class="text-success">No derivative chromosome is detected</h5>
                             {% elif case.result == 1 %}
                             <h5 class="text-danger">
                                 Philadelphia Abnormality is possible ({{ case.count_der }}/{{ case.get_metaphases|length }})
@@ -284,16 +284,16 @@
                 {% endif %}
             {% else %}
             {% if case.confirm_status == 0 %}
-            {% if case.recheck_message %}
-            <div class="alert alert-danger mt-2 w-75 mx-auto text-center" role="alert">
-                <i class="fas fa-comment-medical"></i> {{ case.reject_message }}
-            </div>
-            {% else %}
-            <div class="alert alert-danger mt-2 w-75 mx-auto text-center" role="alert">
-                <i class="fas fa-exclamation-triangle"></i> Detection results have been rejected by medical
-                technician.
-            </div>
-            {% endif %}
+                {% if case.reject_message %}
+                <div class="alert alert-danger mt-2 w-75 mx-auto text-center" role="alert">
+                    <i class="fas fa-comment-medical"></i> {{ case.reject_message }}
+                </div>
+                {% else %}
+                <div class="alert alert-danger mt-2 w-75 mx-auto text-center" role="alert">
+                    <i class="fas fa-exclamation-triangle"></i> Detection results have been rejected by medical
+                    technician.
+                </div>
+                {% endif %}
             {% else %}
             <div class="alert alert-warning mt-2 w-75 mx-auto text-center" role="alert">
                 <i class="fas fa-exclamation-triangle"></i> Detection results have not been verified by medical
