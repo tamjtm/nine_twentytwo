@@ -23,8 +23,6 @@
             <th>Uploaded Time</th>
             <th>Verifying User</th>
             <th>Verified Time</th>
-            <th class="text-white"><i class="fas fa-eye"></i> <i class="fas fa-edit"></i> <i class="fas fa-trash"></i>
-            </th>
         </tr>
         </thead>
         <tbody>
@@ -35,12 +33,14 @@
                 <p class="text-success"><i class="fas fa-check-circle"></i></p>
                 {% elif case.confirm_status == 0 %}
                 <p class="text-danger"><i class="fas fa-times-circle"></i></p>
+                {% elif case.recheck_message %}
+                <p class="text-primary"><i class="fas fa-redo-alt"></i></p>
                 {% else %}
                 <p class="text-warning"><i class="fas fa-clock"></i></p>
                 {% endif %}
             </td>
             <td>
-                <p style="color: #D76C5E;">{{ case.id }}</p>
+                <a href="{% url 'case-detail' case.id %}">{{ case.id }}</a>
             </td>
             <td>
                 <p>{{ case.upload_user }}</p>
@@ -62,8 +62,6 @@
                 <p>-</p>
                 {% endif %}
             </td>
-            <td><a href="{% url 'case-detail' case.id %}"><i class="link fas fa-eye"></i></a> <a href=""><i
-                    class="link fas fa-edit"></i></a> <a href=""><i class="link fas fa-trash"></i></a></td>
         </tr>
         {% endfor %}
         </tbody>

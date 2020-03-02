@@ -40,13 +40,15 @@
                         <!--  Interpretation For Case  -->
                         {% if perms.verification.change_case or case.confirm_status == 1 %}
                             {% if case.result == 0 %}
-                        <h5 class="text-success"> No Philadelphia Abnormality is detected</h5>
+                            <h5 class="text-success"> No Philadelphia Abnormality is detected</h5>
                             {% elif case.result == 1 %}
-                        <h5 class="text-danger">Philadelphia Abnormality is possible ({{ case.percentage }}%)</h5>
+                            <h5 class="text-danger">
+                                Philadelphia Abnormality is possible ({{ case.count_der }}/{{ case.get_metaphases|length }})
+                            </h5>
                             {% else %}
-                                <h5 class="text-warning">This metaphase image can't be detected</h5>
+                            <h5 class="text-warning">This metaphase image can't be detected</h5>
                             {% endif %}
-                        {% if not perms.verification.change_case and perms.verification.view_case%}
+                        {% if not perms.verification.change_case and perms.verification.view_case %}
                         <form method="post" class="text-right" id="recheck-form">
                             {% csrf_token %}
                             <input type="hidden" name="id" value="{{ case.id }}">
@@ -187,79 +189,75 @@
                         <div class="carousel-inner rounded p-3 bg-white">
                             {% for img in case.get_metaphases %}
                                 {% if forloop.counter == 1 %}
-                                <div class="carousel-item active">
+                                    <div class="carousel-item active">
                                 {% else %}
-                                <div class="carousel-item">
+                                    <div class="carousel-item">
                                 {% endif %}
-                                    <center>
-                                    <div class="d-inline-flex">
-                                        <h5 class="p-1 mb-1 text-dark text-uppercase">{{ img }}</h5>
-                                        {% if perms.verification.change_case %}
-                                        <a href="{% url 'retrain' img.id %}"
-                                           class="h5 p-1 mb-1 text-dark text-uppercase"><i class="fas fa-tag"></i></a>
-                                        {% endif %}
-                                    </div>
-                                    </center>
-                                    {% if img.result_image and perms.verification.change_case or case.confirm_status ==
-                                    1 %}
-                                            <div class="row">
-                                                <div class="col-7 text-center">
-                                                    <img class="d-block w-100" src="{{ img.result_image.url }}">
-                                                </div>
-                                                <div class="col-5">
-                                                    <div class="card mt-1 d-flex text-center"
-                                                         style="border-color: #FCC046;">
-                                                        <strong class="card-header p-1 text-center text-white"
-                                                                style="background-color: #FCC046;">Chromosome 9</strong>
-                                                        <div class="card-body d-inline-flex justify-content-center">
-                                                            {% if img.get_chromosome9 %}
-                                                                {% for ch in img.get_chromosome9 %}
-                                                                    <div class="d-flex flex-column">
-                                                                        <strong style="color: red;">{{ ch.name }}</strong>
-                                                                        <img src="{{ ch.image.url }}" class="ch-9"
-                                                                             id="{{ ch.id }}-9"
-                                                                             style="transform: rotate(0deg)">
-                                                                        <small>
-                                                                            {% if ch.get_prediction == 'DER' %}
-                                                                            <strong>
-                                                                                {% endif %}
-                                                                                {{ ch.get_prediction }}
-                                                                                {% if ch.get_prediction == 'DER'%}
-                                                                            </strong>
-                                                                            {% endif %}
-                                                                            -{{ ch.prob}}%
-                                                                        </small>
-                                                                    </div>
-                                                                {% endfor %}
-                                                            {% else %}
-                                                            <div class="d-flex flex-column">not found</div>
-                                                            {% endif %}
-                                                        </div>
-                                                    </div>
-                                                    <div class="card mt-1 d-flex text-center"
-                                                         style="border-color: #FCC046;">
-                                                        <strong class="card-header p-1 text-center text-white"
-                                                                style="background-color: #FCC046;">Chromosome
-                                                            22</strong>
-                                                        <div class="card-body d-inline-flex justify-content-center">
-                                                            {% if img.get_chromosome22 %}
-                                                                {% for ch in img.get_chromosome22 %}
-                                                                    <div class="d-flex flex-column">
-                                                                        <strong style="color: blue;">{{ ch.name }}</strong>
-                                                                        <img src="{{ ch.image.url }}" class="ch-22 my-1"
-                                                                             id="{{ ch.id }}-22"
-                                                                             style="height: 90%; width: 90%; transform: rotate(0deg);">
-                                                                        <small>{% if ch.get_prediction == 'PH' %}<strong>{% endif %}{{ ch.get_prediction }}{% if ch.get_prediction == 'PH' %}</strong>{% endif %}-{{ ch.prob}}%</small>
-                                                                    </div>
-                                                                {% endfor %}
-                                                            {% else %}
-                                                            <div class="d-flex flex-column">not found</div>
-                                                            {% endif %}
-                                                        </div>
-                                                    </div>
+                                <div class="d-flex">
+                                    <h5 class="p-1 mb-1 text-dark text-uppercase ml-auto">{{ img }}</h5>
+                                    {% if perms.verification.change_case %}
+                                    <a href="{% url 'retrain' img.id %}" class="h5 btn btn-outline-secondary btn-sm ml-auto" role="button">Label</a>
+                                    {% endif %}
+                                </div>
+                                {% if img.result_image and perms.verification.change_case or case.confirm_status == 1 %}
+                                    <div class="row">
+                                        <div class="col-7 text-center">
+                                            <img class="d-block w-100" src="{{ img.result_image.url }}">
+                                        </div>
+                                        <div class="col-5">
+                                            <div class="card mt-1 d-flex text-center"
+                                                 style="border-color: #FCC046;">
+                                                <strong class="card-header p-1 text-center text-white"
+                                                        style="background-color: #FCC046;">Chromosome 9</strong>
+                                                <div class="card-body d-inline-flex justify-content-center">
+                                                    {% if img.get_chromosome9 %}
+                                                        {% for ch in img.get_chromosome9 %}
+                                                            <div class="d-flex flex-column">
+                                                                <strong style="color: red;">{{ ch.name }}</strong>
+                                                                <img src="{{ ch.image.url }}" class="ch-9"
+                                                                     id="{{ ch.id }}-9"
+                                                                     style="transform: rotate(0deg)">
+                                                                <small>
+                                                                    {% if ch.get_prediction == 'DER' %}
+                                                                    <strong>
+                                                                        {% endif %}
+                                                                        {{ ch.get_prediction }}
+                                                                        {% if ch.get_prediction == 'DER'%}
+                                                                    </strong>
+                                                                    {% endif %}
+                                                                    -{{ ch.prob}}%
+                                                                </small>
+                                                            </div>
+                                                        {% endfor %}
+                                                    {% else %}
+                                                    <div class="d-flex flex-column">not found</div>
+                                                    {% endif %}
                                                 </div>
                                             </div>
-                                        {% else %}
+                                            <div class="card mt-1 d-flex text-center"
+                                                 style="border-color: #FCC046;">
+                                                <strong class="card-header p-1 text-center text-white"
+                                                        style="background-color: #FCC046;">Chromosome
+                                                    22</strong>
+                                                <div class="card-body d-inline-flex justify-content-center">
+                                                    {% if img.get_chromosome22 %}
+                                                        {% for ch in img.get_chromosome22 %}
+                                                            <div class="d-flex flex-column">
+                                                                <strong style="color: blue;">{{ ch.name }}</strong>
+                                                                <img src="{{ ch.image.url }}" class="ch-22 my-1"
+                                                                     id="{{ ch.id }}-22"
+                                                                     style="height: 90%; width: 90%; transform: rotate(0deg);">
+                                                                <small>{% if ch.get_prediction == 'PH' %}<strong>{% endif %}{{ ch.get_prediction }}{% if ch.get_prediction == 'PH' %}</strong>{% endif %}-{{ ch.prob}}%</small>
+                                                            </div>
+                                                        {% endfor %}
+                                                    {% else %}
+                                                    <div class="d-flex flex-column">not found</div>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% else %}
                                     <center>
                                         <img class="d-block w-50" src="{{ img.original_image.url }}">
                                     </center>
@@ -305,22 +303,23 @@
             {% endif %}
         </div>
     </div>
-<script>
-    $(document).ready(function(){
-        var deg_9 = 0;
-        $(".ch-9").click(function(){
-        deg_9 = deg_9 + 180;
-        document.getElementById(this.id).style.transform = `rotate(${deg_9}deg)`;
+    {% if perms.verification.change_case %}
+    <script>
+        $(document).ready(function(){
+            var deg_9 = 0;
+            $(".ch-9").click(function(){
+            deg_9 = deg_9 + 180;
+            document.getElementById(this.id).style.transform = `rotate(${deg_9}deg)`;
+            });
         });
-    });
 
-    $(document).ready(function(){
-        var deg_22 = 0;
-        $(".ch-22").click(function(){
-        deg_22 = deg_22 + 45;
-        document.getElementById(this.id).style.transform = `rotate(${deg_22}deg)`;
+        $(document).ready(function(){
+            var deg_22 = 0;
+            $(".ch-22").click(function(){
+            deg_22 = deg_22 + 45;
+            document.getElementById(this.id).style.transform = `rotate(${deg_22}deg)`;
+            });
         });
-    });
-
-</script>
+    </script>
+    {% endif %}
 {% endblock %}
