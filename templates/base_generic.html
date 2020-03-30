@@ -46,22 +46,24 @@
         </button>
 
         <div class="collapse navbar-collapse " id="myNavbar">
-            <form class="form-inline my-2 my-lg-0" action="{% url 'index' %}" method="get">
-                <input name="search" class="form-control form-control-sm mr-sm-2" type="search" placeholder="Search"
-                       aria-label="Search">
-                <button class="btn btn-sm btn-outline-dark my-2 my-sm-0" type="submit"><i class="fas fa-search"></i>
-                    Search
-                </button>
-            </form>
-            <ul class="navbar-nav ml-auto mt-2 mt-lg-0 ">
+            <ul class="navbar-nav mt-2 mt-lg-0 ">
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'index' %}"><i class="fas fa-home"></i> Home</a>
                 </li>
                 {% if perms.verification.add_metaphaseimage %}
                 <li class="nav-item">
-                    <a class="nav-link" href="/upload"><i class="fas fa-file-image"></i> Upload</a>
+                    <a class="nav-link" href="/upload"><i class="fas fa-folder-plus"></i> Upload</a>
                 </li>
                 {% endif %}
+            </ul>
+            <ul class="navbar-nav ml-auto mt-2 mt-lg-0 ">
+                <form class="form-inline my-2 my-lg-0" action="{% url 'index' %}" method="get">
+                    <input name="search" class="form-control form-control-sm mr-sm-2" type="search" placeholder="case ID or username"
+                           aria-label="Search">
+                    <button class="btn btn-sm btn-outline-dark my-2 my-sm-0" type="submit"><i class="fas fa-search"></i>
+                        Search
+                    </button>
+                </form>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-user"></i> Hello, {{ user.get_username }}
@@ -81,7 +83,7 @@
             </ul>
         </div>
         {% else %}
-        <a class="navbar-brand text-uppercase" href="/allcases">Nine-Twentytwo</a>
+        <a class="navbar-brand text-uppercase" href="/allcases">9-22</a>
     {% endif %}
     </nav>
     {% endblock %}
@@ -89,6 +91,5 @@
 <div id="content" class="main pt-5">
     {% block content %}{% endblock %}
 </div>
-
 </body>
 </html>
