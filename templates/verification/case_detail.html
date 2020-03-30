@@ -161,12 +161,12 @@
             </div>
             {% if perms.verification.change_case and case.reject_message %}
             <div class="alert alert-danger mt-2 w-100" role="alert">
-                <i class="fas fa-comment-medical"></i> {{ case.reject_message }}
+                <i class="fas fa-comment-medical"></i> <strong>Medical Technician:</strong> {{ case.reject_message }}
             </div>
             {% endif %}
             {% if perms.verification.change_case and case.recheck_message %}
             <div class="alert alert-light mt-2 w-100" role="alert">
-                <i class="fas fa-comment-medical"></i> {{ case.recheck_message }}
+                <i class="fas fa-comment-medical"></i> <strong>Physician:</strong> {{ case.recheck_message }}
             </div>
             {% endif %}
         </div>
@@ -286,7 +286,7 @@
             {% if case.confirm_status == 0 %}
                 {% if case.reject_message %}
                 <div class="alert alert-danger mt-2 w-75 mx-auto text-center" role="alert">
-                    <i class="fas fa-comment-medical"></i> {{ case.reject_message }}
+                    <i class="fas fa-comment-medical"></i> <strong>Medical Technician:</strong> {{ case.reject_message }}
                 </div>
                 {% else %}
                 <div class="alert alert-danger mt-2 w-75 mx-auto text-center" role="alert">
