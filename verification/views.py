@@ -16,14 +16,7 @@ class CaseListView(LoginRequiredMixin, ListView):
     model = Case
 
     def get_queryset(self):
-        query = self.request.GET.get('search')
-        if query:
-            object_list = Case.objects.filter(
-                Q(id__icontains=query) | Q(upload_user__username__icontains=query)
-                | Q(confirm_user__username__icontains=query) | Q(owner__username__icontains=query)
-            ).order_by('confirm_status', 'upload_time')
-        else:
-            object_list = Case.objects.all().order_by('confirm_status', '-recheck_message', 'upload_time')
+        object_list = Case.objects.all().order_by('confirm_status', '-recheck_message', 'upload_time')
         return object_list
 
     def get_context_data(self, **kwargs):

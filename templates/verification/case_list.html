@@ -3,18 +3,45 @@
 {% block title %}9-22{% endblock %}
 
 {% block content %}
+<div id="demo">
+</div>
 <div class="text-center" style="height: 70px; color: #555D60;">
     {% if request.path == '/mycases/' %}
-    <h1 class="mt-3 mb-2" style="color: #2FBECD;">My Cases</h1>
-    {% elif keyword %}
-    <h2 class="mt-3 mb-2" style="color: #D76C5E;">Search result for '{{ keyword }}'</h2>
+    <h1 class="mt-3 mb-1" style="color: #2FBECD;">My Cases</h1>
     {% else %}
-    <h1 class="mt-3 mb-2" style="color: #2FBECD;">Cases List</h1>
+    <h1 class="mt-3 mb-1" style="color: #2FBECD;">Cases List</h1>
     {% endif %}
 </div>
 <center>
 {% if case_list %}
-    <table id="case-list" class="table table-hover text-center w-75 rounded p-3 bg-white" style="color: #555D60;">
+    <div class="status-filter">
+        <form class="custom-control custom-checkbox custom-control-inline">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1"><i class="fas fa-search"></i></span>
+                </div>
+                <input type="text" class="form-control" placeholder="caseID or username" aria-label="Username" aria-describedby="basic-addon1" id="searchInput" onkeyup="searchFilter()">
+            </div>
+        </form>
+        <div class="custom-control custom-checkbox custom-control-inline">
+            <input type="checkbox" class="custom-control-input" id="checkbox-accept" name="filterStatus" value="accept">
+            <label class="custom-control-label text-success" for="checkbox-accept"><i class="fas fa-check-circle"></i> accepted</label>
+        </div>
+        <div class="custom-control custom-checkbox custom-control-inline">
+            <input type="checkbox" class="custom-control-input" id="checkbox-reject" name="filterStatus" value="reject">
+            <label class="custom-control-label text-danger" for="checkbox-reject"><i class="fas fa-times-circle"></i> rejected</label>
+        </div>
+        <div class="custom-control custom-checkbox custom-control-inline">
+            <input type="checkbox" class="custom-control-input" id="checkbox-pending" name="filterStatus" value="pending">
+            <label class="custom-control-label text-warning" for="checkbox-pending"><i class="fas fa-clock"></i> pending</label>
+        </div>
+        <div class="custom-control custom-checkbox custom-control-inline">
+            <input type="checkbox" class="custom-control-input" id="checkbox-recheck" name="filterStatus" value="recheck">
+            <label class="custom-control-label text-primary" for="checkbox-recheck"><i class="fas fa-redo-alt"></i> rechecking</label>
+        </div>
+    </div>
+
+    <table class="table table-hover text-center w-75 rounded mt-3 p-3 bg-white" id="caseTable" style="color: #555D60;">
         <thead>
         <tr>
             <th>Status</th>
@@ -28,34 +55,34 @@
         <tbody>
         {% for case in case_list %}
         <tr>
-            <td>
+            <td class="status {% if case.confirm_status == 1 %}accept{% elif case.confirm_status == 0 %}reject{% elif case.recheck_message %}recheck{% else %}pending{% endif %}">
                 {% if case.confirm_status == 1 %}
-                <p class="text-success"><i class="fas fa-check-circle"></i></p>
+                <p class="accept text-success"><i class="fas fa-check-circle"></i></p>
                 {% elif case.confirm_status == 0 %}
-                <p class="text-danger"><i class="fas fa-times-circle"></i></p>
+                <p class="reject text-danger"><i class="fas fa-times-circle"></i></p>
                 {% elif case.recheck_message %}
-                <p class="text-primary"><i class="fas fa-redo-alt"></i></p>
+                <p class="recheck text-primary"><i class="fas fa-redo-alt"></i></p>
                 {% else %}
-                <p class="text-warning"><i class="fas fa-clock"></i></p>
+                <p class="pending text-warning"><i class="fas fa-clock"></i></p>
                 {% endif %}
             </td>
-            <td>
+            <td class="id">
                 <a href="{% url 'case-detail' case.id %}">{{ case.id }}</a>
             </td>
-            <td>
+            <td class="uploader">
                 <p>{{ case.upload_user }}</p>
             </td>
-            <td>
+            <td class="uploadTime">
                 <p>{{ case.upload_time }}</p>
             </td>
-            <td>
+            <td class="verifier">
                 {% if case.confirm_user %}
                 <p>{{ case.confirm_user }}</p>
                 {% else %}
                 <p>-</p>
                 {% endif %}
             </td>
-            <td>
+            <td class="verifyTime">
                 {% if case.confirm_time %}
                 <p>{{ case.confirm_time }}</p>
                 {% else %}
@@ -76,4 +103,40 @@
     </div>
 {% endif %}
 </center>
+
+<script>
+    function searchFilter() {
+      // Declare variables
+      var input, filter, table, tr, td, i;
+      input = document.getElementById("searchInput");
+      filter = input.value.toUpperCase();
+      table = document.getElementById("caseTable");
+      tr = table.getElementsByTagName("tr");
+
+      // Loop through all table rows, and hide those who don't match the search query
+      for (i = 0; i < tr.length; i++) {
+        id = tr[i].getElementsByTagName("td")[1];
+        uploader = tr[i].getElementsByTagName("td")[2];
+        verifier = tr[i].getElementsByTagName("td")[4];
+        if (id || uploader || verifier) {
+            id = id.textContent || id.innerText;
+            uploader = uploader.textContent || uploader.innerText;
+            verifier = verifier.textContent || verifier.innerText;
+
+            if (id.toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+            }
+            else if (uploader.toUpperCase().indexOf(filter) == 17) {
+                tr[i].style.display = "";
+            }
+            else if (verifier.toUpperCase().indexOf(filter) == 17) {
+                tr[i].style.display = "";
+            }
+            else {
+                tr[i].style.display = "none";
+            }
+        }
+      }
+    }
+</script>
 {% endblock %}
