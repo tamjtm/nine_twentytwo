@@ -89,10 +89,22 @@ def prep_meta_img(filename):
         all_contours.append(temp_contour[i])
         cropped2.append(cropped[i])
 
-    # resize(add border)
+    ch_img = resize_chr(cropped2)
+    ch_img_s = resize_chr(cropped2,9)
+
+    return ch_img, ch_img_s
+
+def resize_chr(cropped2, amount=0):
+    if (amount==0):
+        amount = len(cropped2)
+
     fixed_h, fixed_w = 100, 72
     temp = []
-    for j, img in enumerate(cropped2):
+    for j, img in enumerate(cropped2[:amount]):
+
+        if (amount!=0):
+            img = cv2.resize(img, dsize=(16,int(16*(img.shape[0]/img.shape[1]))), interpolation=cv2.INTER_CUBIC)
+            
         top = int((fixed_h - img.shape[0]) / 2)
         if top * 2 + img.shape[0] != fixed_h:
             bot = int((fixed_h - img.shape[0]) / 2 + 1)
@@ -151,11 +163,11 @@ def label_framing(temp_index, chro):
         draw.text(index, str(chro) + message[i], fill=color, font=font)
 
 
-def predict_22(ch_img, model_find, model_classify):
+def predict_22(ch_img, ch_img_s, model_find, model_classify):
     chromosome = 22
-    n = 5
+    n = len(ch_img_s)
 
-    find = model_find.predict_classes(ch_img[:n])
+    find = model_find.predict_classes(ch_img_s)[:n])
     classify = model_classify.predict_classes(ch_img[:n])
     prob = model_classify.predict(ch_img[:n])
 
@@ -262,11 +274,11 @@ def nine_22(meta_filename):
         pred = {}
 
         # preprocess metaphase image
-        ch_img = prep_meta_img(filename)
+        ch_img, ch_img_s = prep_meta_img(filename)
 
         # predict 9,22 and framing
         img_9t, prob_9t, pred_9t, result_9t, index9 = predict_9(ch_img, model_9n, model_9p)
-        img_22t, prob_22t, pred_22t, result_22t, index22 = predict_22(ch_img, model_22f, model_22c)
+        img_22t, prob_22t, pred_22t, result_22t, index22 = predict_22(ch_img, ch_img_s, model_22f, model_22c)
         temp_framed[0] = array_to_img(temp_framed[0])
 
         # interpret image result
