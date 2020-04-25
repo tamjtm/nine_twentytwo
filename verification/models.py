@@ -25,6 +25,8 @@ class Case(models.Model):
     result = models.BooleanField(null=True, blank=True)
     upload_user = models.ForeignKey(User, related_name='upload', on_delete=models.SET_NULL, null=True)
     upload_time = models.DateTimeField(auto_now_add=True)
+    modify_user = models.ForeignKey(User, related_name='modify', on_delete=models.SET_NULL, null=True)
+    modify_time = models.DateTimeField(auto_now_add=True)
     confirm_user = models.ForeignKey(User, related_name='confirm', on_delete=models.SET_NULL, null=True, blank=True)
     confirm_time = models.DateTimeField(null=True, blank=True)
     confirm_status = models.BooleanField(null=True, blank=True)

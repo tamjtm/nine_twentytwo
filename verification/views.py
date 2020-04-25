@@ -52,12 +52,16 @@ class CaseDetailView(LoginRequiredMixin, DetailView):
             instance.recheck_message = None
             instance.confirm_time = timezone.now()
             instance.confirm_user = request.user
+            instance.modify_time = timezone.now()
+            instance.modify_user = request.user
         elif request.POST.get('result') == "reject":
             instance.confirm_status = False
             instance.recheck_message = None
             instance.reject_message = request.POST.get('message')
             instance.confirm_time = timezone.now()
             instance.confirm_user = request.user
+            instance.modify_time = timezone.now()
+            instance.modify_user = request.user
         elif request.POST.get('result') == "recheck":
             instance.confirm_status = None
             instance.recheck_message = request.POST.get('message')
@@ -104,6 +108,8 @@ class UploadView(PermissionRequiredMixin, CreateView):
             image.save()
 
         case.confirm_status = None
+        case.modify_time = timezone.now()
+        case.modify_user = user
         case.save(flag=True)
         end = time.time()
         timer = int(end-start)

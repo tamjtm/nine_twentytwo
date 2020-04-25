@@ -34,6 +34,7 @@
                     {% else %}
                     <p>-</p>
                     {% endif %}
+<!--                    <small class="text-muted">Last modified on {{ case.modify_time }} by {{ case.modify_user }}</small>-->
                     <hr class="mt-3 mb-3">
                     <div class="mt-2">
                         <strong>Result: </strong>
@@ -171,7 +172,6 @@
             {% endif %}
         </div>
         <div class="col-9">
-            <!-- Rejection Message -->
             {% if perms.verification.change_case or case.confirm_status %}
 
             <!--  Metaphase Images  -->
