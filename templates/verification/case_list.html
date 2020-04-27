@@ -5,6 +5,15 @@
 {% block content %}
 <p id="demo"></p>
 
+{% if perms.verification.add_metaphaseimage %}
+<a href="/upload" class="fab-icon-holder">
+    <i class="fa fa-plus fab-icon text-white"></i>
+</a>
+<div class="fab-label">
+    <div class="fab-text">Upload images</div>
+</div>
+{% endif %}
+
 <div class="text-center" style="height: 70px; color: #555D60;">
     {% if request.path == '/mycases/' %}
     <h1 class="mt-3 mb-1" style="color: #2FBECD;">My Cases</h1>
@@ -20,7 +29,7 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text" id="basic-addon1"><i class="fas fa-search"></i></span>
                 </div>
-                <input type="text" class="form-control" placeholder="caseID or username" aria-label="Username" aria-describedby="basic-addon1" id="searchInput" onkeyup="searchFilter()">
+                <input type="text" class="form-control" placeholder="caseID or username" aria-label="Username" aria-describedby="basic-addon1" id="searchInput" name="searchFilter">
             </div>
         </form>
         <div class="custom-control custom-checkbox custom-control-inline">
@@ -80,10 +89,13 @@
             </td>
             <td class="verifier">
                 {% if case.confirm_user %}
-                <p>{{ case.confirm_user }}</p>
+                    <p>{{ case.confirm_user }}</p>
                 {% else %}
-                <p>-</p>
+                    <p>-</p>
                 {% endif %}
+            </td>
+            <td class="physician" hidden>
+                {{ case.owner }}
             </td>
         </tr>
         {% endfor %}
@@ -101,39 +113,32 @@
 </center>
 
 <script>
-    function searchFilter() {
-      // Declare variables
-      var input, filter, table, tr, td, i;
-      input = document.getElementById("searchInput");
-      filter = input.value.toUpperCase();
-      table = document.getElementById("caseTable");
-      tr = table.getElementsByTagName("tr");
+    $("input[name='searchFilter']").keyup(function() {
+        var filter = $(this).val().toUpperCase();
 
-      // Loop through all table rows, and hide those who don't match the search query
-      for (i = 0; i < tr.length; i++) {
-        id = tr[i].getElementsByTagName("td")[1];
-        uploader = tr[i].getElementsByTagName("td")[2];
-        verifier = tr[i].getElementsByTagName("td")[4];
-        if (id || uploader || verifier) {
-            id = id.textContent || id.innerText;
-            uploader = uploader.textContent || uploader.innerText;
-            verifier = verifier.textContent || verifier.innerText;
+        $("#caseTable tbody tr").each(function () {
+            var id = $('td.id', this).text();
+            var uploader = $('td.uploader', this).text();
+            var verifier = $('td.verifier', this).text();
+            var physician = $('td.physician', this).text();
 
             if (id.toUpperCase().indexOf(filter) > -1) {
-                tr[i].style.display = "";
+                $(this).show();
             }
             else if (uploader.toUpperCase().indexOf(filter) == 17) {
-                tr[i].style.display = "";
+                $(this).show();
             }
-            else if (verifier.toUpperCase().indexOf(filter) == 17) {
-                tr[i].style.display = "";
+            else if (verifier.toUpperCase().indexOf(filter) == 38) {
+                $(this).show();
+            }
+            else if (physician.toUpperCase().indexOf(filter) == 17) {
+                $(this).show();
             }
             else {
-                tr[i].style.display = "none";
+                $(this).hide();
             }
-        }
-      }
-    }
+        });
+    });
 
 
     $("input[name='filterStatus']").change(function () {
@@ -144,9 +149,9 @@
 
         $("input[name='filterStatus']").each(function () {
             if($(this).is(":checked")) {
-                var value = $(this).val();
+                var filter = $(this).val();
                 // show if it is selected status
-                $('#caseTable tbody tr td.status[rel="' + value + '"]').parent('tr').show();
+                $('#caseTable tbody tr td.status[rel="' + filter + '"]').parent('tr').show();
                 bShowAll = false;
             }
         });
