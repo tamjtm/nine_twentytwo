@@ -214,9 +214,10 @@
                                                         {% for ch in img.get_chromosome9 %}
                                                             <div class="d-flex flex-column">
                                                                 <strong style="color: red;">{{ ch.name }}</strong>
-                                                                <img src="{{ ch.image.url }}" class="ch-9"
+                                                                <img src="{{ ch.image.url }}" class="ch my-1"
                                                                      id="{{ ch.id }}-9"
-                                                                     style="transform: rotate(0deg)">
+                                                                     style="transform: rotate(0deg)"
+                                                                     title="click to rotate" >
                                                                 <small>
                                                                     {% if ch.get_prediction == 'DER' %}
                                                                     <strong>
@@ -244,9 +245,10 @@
                                                         {% for ch in img.get_chromosome22 %}
                                                             <div class="d-flex flex-column">
                                                                 <strong style="color: blue;">{{ ch.name }}</strong>
-                                                                <img src="{{ ch.image.url }}" class="ch-22 my-1"
+                                                                <img src="{{ ch.image.url }}" class="ch my-1"
                                                                      id="{{ ch.id }}-22"
-                                                                     style="height: 90%; width: 90%; transform: rotate(0deg);">
+                                                                     style="height: 90%; width: 90%; transform: rotate(0deg);"
+                                                                     title="click to rotate" >
                                                                 <small>{% if ch.get_prediction == 'PH' %}<strong>{% endif %}{{ ch.get_prediction }}{% if ch.get_prediction == 'PH' %}</strong>{% endif %}-{{ ch.prob}}%</small>
                                                             </div>
                                                         {% endfor %}
@@ -306,18 +308,10 @@
     {% if perms.verification.change_case %}
     <script>
         $(document).ready(function(){
-            var deg_9 = 0;
-            $(".ch-9").click(function(){
-            deg_9 = deg_9 + 180;
-            document.getElementById(this.id).style.transform = `rotate(${deg_9}deg)`;
-            });
-        });
-
-        $(document).ready(function(){
-            var deg_22 = 0;
-            $(".ch-22").click(function(){
-            deg_22 = deg_22 + 45;
-            document.getElementById(this.id).style.transform = `rotate(${deg_22}deg)`;
+            var deg = 0;
+            $(".ch").click(function(){
+            deg = deg + 45;
+            document.getElementById(this.id).style.transform = `rotate(${deg}deg)`;
             });
         });
     </script>
