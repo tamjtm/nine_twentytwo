@@ -1,4 +1,6 @@
-﻿import cv2
+﻿from verification.detection_van import prep_meta_img_van
+
+import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import stats
@@ -10,7 +12,6 @@ from PIL import Image, ImageDraw, ImageFont
 from skimage import measure
 from keras.models import Model,model_from_json
 
-all_contours = []
 
 #show all img
 def show_all_img(list_img):
@@ -78,6 +79,7 @@ def prep_meta_img(filename):
     cropped = []
     origin_cropped = []
     temp_temp = []
+    all_contours = []
     
     img = cv2.copyMakeBorder(img, 5, 5, 5, 5, cv2.BORDER_CONSTANT, value=255)
     blur = cv2.GaussianBlur(img,(5,5),10)
@@ -175,7 +177,7 @@ def prep_meta_img(filename):
               min_w = int(min(all_contours[i][:, 1])) 
               temp_con2 = []
               for value2 in con2:
-                  temp_con2.append([value2[0] +min_h-5, value2[1] + min_w-5])
+                  temp_con2.append([value2[0] +min_h-7, value2[1] + min_w-7])
               temp_crop.append([right_rotated,temp_con2,temp_crop2])
             index_del.append(i)
             break
@@ -244,7 +246,7 @@ def prep_meta_img(filename):
                 min_w = int(min(all_contours[i][:, 1])) 
                 temp_con2 = []
                 for value2 in con2:
-                  temp_con2.append([value2[0] +min_h-5, value2[1] + min_w-5])
+                  temp_con2.append([value2[0] +min_h-7, value2[1] + min_w-7])
                 temp_crop.append([right_rotated,temp_con2]) 
               index_del.append(i)
               break
@@ -269,7 +271,7 @@ def prep_meta_img(filename):
     ch_img = resize_chr(cropped,len(cropped))
     ch_img_s = resize_chr(cropped,9)
 
-    return ch_img, ch_img_s, framed_img
+    return ch_img, ch_img_s, framed_img, all_contours
 
 # Resize cropped chromosomes to same size
 def resize_chr(chr, amount):
@@ -300,7 +302,7 @@ def resize_chr(chr, amount):
 
   return ch_img
 
-def framing(no, chro, no_result, framed_img):
+def framing(no, chro, no_result, framed_img, all_contours):
     text = 'ABCDEF'
     font = ImageFont.truetype('Roboto-Bold.ttf', size=10)
     min_h = int(min(all_contours[no][:, 0])) - 8 # Top border
@@ -320,7 +322,7 @@ def framing(no, chro, no_result, framed_img):
     return framed_img
 
 
-def predict_22(ch_img, ch_img_s, model_find, model_classify, framed_img):
+def predict_22(ch_img, ch_img_s, model_find, model_classify, framed_img, all_contours):
     chromosome = 22
     n = len(ch_img_s)
     
@@ -334,7 +336,7 @@ def predict_22(ch_img, ch_img_s, model_find, model_classify, framed_img):
             img = array_to_img(ch_img[j])
 
             if find[j] == 1:  # chr 22
-                framed_img = framing(j, chromosome, len(result_img), framed_img)
+                framed_img = framing(j, chromosome, len(result_img), framed_img, all_contours)
                 if classify[j] == 1:  # phila 22
                     result_img.append(img)
                     result_prob.append(prob[j][1])
@@ -361,7 +363,7 @@ def predict_22(ch_img, ch_img_s, model_find, model_classify, framed_img):
     return result_img, result_prob, result_pred, result, framed_img
 
 
-def predict_9(ch_img, model_n, model_p, framed_img):
+def predict_9(ch_img, model_n, model_p, framed_img, all_contours):
     chromosome = 9
     n = 36
 
@@ -375,7 +377,7 @@ def predict_9(ch_img, model_n, model_p, framed_img):
             img = array_to_img(ch_img[j])
 
             if predicted_N[j] == 1 or predicted_P[j] == 1:
-                framed_img = framing(j, chromosome,len(result_img),framed_img)
+                framed_img = framing(j, chromosome,len(result_img),framed_img,all_contours)
             if predicted_N[j] == 1 and predicted_P[j] == 1:
                 result_img.append(img)
                 index_p.append(j + 1)
@@ -412,15 +414,15 @@ def nine_22(meta_filename):
     prediction = {}
 
     for i, filename in enumerate(meta_filename, 1):
-        all_contours.clear()
         pred = {}
 
         # preprocess metaphase image
-        ch_img, ch_img_s, framed_img = prep_meta_img(filename)
+        ch_img, ch_img_s, framed_img, all_contours = prep_meta_img(filename)
+        # ch_img, ch_img_s, framed_img, all_contours = prep_meta_img_van(filename)
 
         # predict 9,22 and framing
-        img_9t, prob_9t, pred_9t, result_9t, framed_img = predict_9(ch_img, model_9n, model_9p, framed_img)
-        img_22t, prob_22t, pred_22t, result_22t, framed_img = predict_22(ch_img, ch_img_s, model_22f, model_22c, framed_img)
+        img_9t, prob_9t, pred_9t, result_9t, framed_img = predict_9(ch_img, model_9n, model_9p, framed_img, all_contours)
+        img_22t, prob_22t, pred_22t, result_22t, framed_img = predict_22(ch_img, ch_img_s, model_22f, model_22c, framed_img, all_contours)
 
         # interpret image result
         if result_9t is not None and result_22t is not None:
