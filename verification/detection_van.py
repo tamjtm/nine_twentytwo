@@ -256,34 +256,39 @@ def moment_of_peak_from_pivot(location_of_peaks,magnitude_of_peaks,reference_dis
 def get_threshold_point_intensity_moment(masked_gray_image,thresholded_mask):
   masked_1D_array = get_mask_array_of_intensity(thresholded_mask,masked_gray_image)
   masked_1D_array = masked_1D_array[np.where(masked_1D_array > 180)]
+  if len(masked_1D_array) == 0:
+    return 180
   my_hist, bins_edge = exposure.histogram(masked_1D_array)
   peaks, peak_prop = find_peaks(my_hist, height=0)
-  height_list = peak_prop['peak_heights']
-  
-  location_of_peaks = bins_edge[peaks]
-  index_middle_peak = find_pivot_index(len(location_of_peaks))
-  left_end_index = index_middle_peak
-  right_start_index = index_middle_peak + 1
-  middle_distance = get_middle_distance(location_of_peaks,index_middle_peak)
-  left_moment = moment_of_peak_from_pivot(location_of_peaks[0:left_end_index+1],height_list[0:left_end_index+1],middle_distance,offset_dist=3)
-  right_moment = moment_of_peak_from_pivot(location_of_peaks[right_start_index:],height_list[right_start_index:],middle_distance,offset_dist=3)
-  ratio_moment = left_moment / right_moment
-  num_peaks = len(location_of_peaks)
-  if ratio_moment < 1:
-    target_peak_index = num_peaks - 1
-  elif ratio_moment < 1.1:
-    target_peak_index = np.ceil(10/12 * num_peaks - 1).astype(int)
-  elif ratio_moment < 1.3:
-    target_peak_index = np.ceil(9.4/12 * num_peaks - 1).astype(int)
-  elif ratio_moment < 2: 
-    target_peak_index = np.ceil(8/12 * num_peaks - 1).astype(int)
-  elif ratio_moment < 3: 
-    target_peak_index = np.ceil(6.3/12 * num_peaks - 1).astype(int)
-  elif ratio_moment < 4: 
-    target_peak_index = np.ceil(6.2/12 * num_peaks - 1).astype(int)
-  else: 
-    target_peak_index = np.ceil(5/12 * num_peaks - 1).astype(int)
-  return bins_edge[peaks[target_peak_index]]
+  if len(peaks) > 2:
+    height_list = peak_prop['peak_heights']
+    
+    location_of_peaks = bins_edge[peaks]
+    index_middle_peak = find_pivot_index(len(location_of_peaks))
+    left_end_index = index_middle_peak
+    right_start_index = index_middle_peak + 1
+    middle_distance = get_middle_distance(location_of_peaks,index_middle_peak)
+    left_moment = moment_of_peak_from_pivot(location_of_peaks[0:left_end_index+1],height_list[0:left_end_index+1],middle_distance,offset_dist=3)
+    right_moment = moment_of_peak_from_pivot(location_of_peaks[right_start_index:],height_list[right_start_index:],middle_distance,offset_dist=3)
+    ratio_moment = left_moment / right_moment
+    num_peaks = len(location_of_peaks)
+    if ratio_moment < 1:
+      target_peak_index = num_peaks - 1
+    elif ratio_moment < 1.1:
+      target_peak_index = np.ceil(10/12 * num_peaks - 1).astype(int)
+    elif ratio_moment < 1.3:
+      target_peak_index = np.ceil(9.4/12 * num_peaks - 1).astype(int)
+    elif ratio_moment < 2: 
+      target_peak_index = np.ceil(8/12 * num_peaks - 1).astype(int)
+    elif ratio_moment < 3: 
+      target_peak_index = np.ceil(6.3/12 * num_peaks - 1).astype(int)
+    elif ratio_moment < 4: 
+      target_peak_index = np.ceil(6.2/12 * num_peaks - 1).astype(int)
+    else: 
+      target_peak_index = np.ceil(5/12 * num_peaks - 1).astype(int)
+    return bins_edge[peaks[target_peak_index]]
+  else:
+    return np.mean(masked_1D_array)
 
 ###
 
