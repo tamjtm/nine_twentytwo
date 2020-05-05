@@ -85,6 +85,14 @@ class Case(models.Model):
                                              prob=prediction[i]['prob_22'][j] * 100)
                 chromosome.save()
 
+            # save all cropped chromosomes images to show in labeling page
+            # for j in range(len(prediction[i]['ch'])):
+            #     ch_img = array_to_img(prediction[i]['ch'][j])
+            #     chromosome = ChromosomeImage(metaphase=meta_img,
+            #                                  type=0,
+            #                                  image=to_imagefield(ch_img))
+            #     chromosome.save()
+
             meta_img.result = prediction[i]['result']
             meta_img.save(flag=False)
 
@@ -172,9 +180,9 @@ class MetaphaseImage(models.Model):
 
 class ChromosomeImage(models.Model):
     id = models.CharField(primary_key=True, max_length=30, default='none')
-    name = models.CharField(max_length=2, default='none')
+    name = models.CharField(max_length=5, default='none')
     metaphase = models.ForeignKey(MetaphaseImage, on_delete=models.CASCADE)
-    type = models.IntegerField(choices=((9, 'Chromosome 9'), (22, 'Chromosome 22')))
+    type = models.IntegerField(choices=((9, 'Chromosome 9'), (22, 'Chromosome 22'), (0, 'Chromosome')))
     prediction = models.BooleanField(null=True, blank=True)
     image = models.ImageField(upload_to=set_images_path("."), null=True, blank=True)
     prob = models.IntegerField(null=True, blank=True)
@@ -184,7 +192,10 @@ class ChromosomeImage(models.Model):
             number = ChromosomeImage.objects.filter(
                 Q(metaphase=self.metaphase) & Q(type=self.type)
             ).count()
-            self.name = str(self.type) + chr(65 + number)
+            if self.type == 0:
+                self.name = 'ch' + str(number+1)
+            else:
+                self.name = str(self.type) + chr(65 + number)
             self.id = self.metaphase.id + "_" + self.name
             self.save(flag=False, *args, **kwargs)
         return super(ChromosomeImage, self).save(*args, **kwargs)

@@ -133,8 +133,10 @@ class MetaphaseDetailView(PermissionRequiredMixin, DetailView):
     permission_required = 'verification.add_metaphaseimage'
 
     def get_context_data(self, **kwargs):
+        # meta_id = self.object
+        meta_id = 'HN6305052221_01'
         context = super(MetaphaseDetailView, self).get_context_data(**kwargs)
         context['chromosomes'] = ChromosomeImage.objects.filter(
-            Q(name__icontains='ch')
+            Q(type=0) & Q(metaphase=meta_id)
         )
         return context
