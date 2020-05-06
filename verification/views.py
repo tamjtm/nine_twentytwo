@@ -136,7 +136,11 @@ class MetaphaseDetailView(PermissionRequiredMixin, DetailView):
         # meta_id = self.object
         meta_id = 'HN6305052221_01'
         context = super(MetaphaseDetailView, self).get_context_data(**kwargs)
-        context['chromosomes'] = ChromosomeImage.objects.filter(
+        ch = ChromosomeImage.objects.filter(
             Q(type=0) & Q(metaphase=meta_id)
         )
+        ch = ch.extra(select={
+                        'ch_order': "CAST(substr(name, 3, 2) AS UNSIGNED)"
+        })
+        context['chromosomes'] = ch.order_by('-ch_order')
         return context
