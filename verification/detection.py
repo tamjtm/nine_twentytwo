@@ -466,5 +466,11 @@ def nine_22(meta_filename):
 
         prediction[i] = pred
         print(i, "/", len(meta_filename))
+    
+    # sort result prediction (ph img first)
+    prediction_sorted = {}
+    index_sorted = sorted(prediction, key=lambda k: prediction[k]['result'], reverse=True)
+    for i,index in enumerate(index_sorted):
+      prediction_sorted[i+1] = prediction[index]
 
-    return prediction
+    return prediction_sorted
