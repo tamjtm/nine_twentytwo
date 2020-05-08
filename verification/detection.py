@@ -351,14 +351,11 @@ def predict_22(ch_img, ch_img_s, model_find, model_classify, framed_img, all_con
             break
 
     if np.any(index_n) and not np.any(index_p):
-        #print('Not found abnormal chromosome %d' % chromosome)
-        result = 0
-    elif np.any(index_p) and np.any(index_n):
-        #print('Found abnormal chromosome %d' % chromosome)
-        result = 1
+        result = 0 # all normal
+    elif np.any(index_p):
+        result = 1 # find ph
     else:
-        #print('cannot predict this metaphase')
-        result = None
+        result = -1 # not found 22
 
     return result_img, result_prob, result_pred, result, framed_img
 
@@ -397,11 +394,11 @@ def predict_9(ch_img, model_n, model_p, framed_img, all_contours):
             break
 
     if np.any(index_n) and not np.any(index_p):
-        result = 0
+        result = 0 # all normal
     elif np.any(index_p):
-        result = 1
+        result = 1 # find der
     else:
-        result = None
+        result = -1 # not found 9
 
     return result_img, result_prob, result_pred, result, framed_img
 
@@ -417,47 +414,30 @@ def nine_22(meta_filename):
         pred = {}
 
         # preprocess metaphase image
-        ch_img, ch_img_s, framed_img, all_contours = prep_meta_img(filename)
-        # ch_img, ch_img_s, framed_img, all_contours = prep_meta_img_van(filename)
+        # ch_img, ch_img_s, framed_img, all_contours = prep_meta_img(filename)
+        ch_img, ch_img_s, framed_img, all_contours = prep_meta_img_van(filename)
 
         # predict 9,22 and framing
-        img_9t, prob_9t, pred_9t, result_9t, framed_img = predict_9(ch_img, model_9n, model_9p, framed_img, all_contours)
-        img_22t, prob_22t, pred_22t, result_22t, framed_img = predict_22(ch_img, ch_img_s, model_22f, model_22c, framed_img, all_contours)
+        img_9, prob_9, pred_9, result_9, framed_img = predict_9(ch_img, model_9n, model_9p, framed_img, all_contours)
+        img_22, prob_22, pred_22, result_22, framed_img = predict_22(ch_img, ch_img_s, model_22f, model_22c, framed_img, all_contours)
 
         # interpret image result
-        if result_9t is not None and result_22t is not None:
-            if result_9t + result_22t == 0:
-                # print(">>> Negative")
-                pred['result'] = 0
+        if result_9 != -1 or result_22 != -1:
+            if result_9 == 1 or result_22 == 1:
+                pred['result'] = 1 # Positive
             else:
-                # print(">>> Positive")
-                pred['result'] = 1
-        elif result_9t is not None:
-            if result_9t == 0:
-                # print(">>> Negative")
-                pred['result'] = 0
-            else:
-                # print(">>> Positive")
-                pred['result'] = 1
-        elif result_22t is not None:
-            if result_22t == 0:
-                # print(">>> Negative")
-                pred['result'] = 0
-            else:
-                # print(">>> Positive")
-                pred['result'] = 1
-        else:
-            # print(">>> Cannot detect")
-            pred['result'] = None
+                pred['result'] = 0 # Negative
+        else: # not found both 9 and 22
+            pred['result'] = -1 # no result
 
         # save output
-        pred['img_9'] = img_9t
-        pred['prob_9'] = prob_9t
-        pred['pred_9'] = pred_9t
+        pred['img_9'] = img_9
+        pred['prob_9'] = prob_9
+        pred['pred_9'] = pred_9
 
-        pred['img_22'] = img_22t
-        pred['prob_22'] = prob_22t
-        pred['pred_22'] = pred_22t
+        pred['img_22'] = img_22
+        pred['prob_22'] = prob_22
+        pred['pred_22'] = pred_22
 
         pred['framed'] = framed_img
 
@@ -471,6 +451,6 @@ def nine_22(meta_filename):
     prediction_sorted = {}
     index_sorted = sorted(prediction, key=lambda k: prediction[k]['result'], reverse=True)
     for i,index in enumerate(index_sorted):
-      prediction_sorted[i+1] = prediction[index]
+        prediction_sorted[i+1] = prediction[index]
 
     return prediction_sorted
