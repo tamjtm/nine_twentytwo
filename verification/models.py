@@ -43,12 +43,12 @@ class Case(models.Model):
     def count_der(self):
         meta_result = []
         for meta_img in self.get_metaphases:
-            meta_result.append(meta_img.result)
+            meta_result.append(meta_img.result == 1)
         return sum(result for result in meta_result)
 
     @property
     def get_metaphases(self):
-        return MetaphaseImage.objects.filter(case=self).order_by('-result')
+        return MetaphaseImage.objects.filter(case=self).order_by('id')
 
     @property
     def get_new_metaphases(self):
@@ -93,7 +93,11 @@ class Case(models.Model):
             #                                  image=to_imagefield(ch_img))
             #     chromosome.save()
 
-            meta_img.result = prediction[i]['result']
+            if prediction[i]['result'] == -1:
+                meta_img.result = None
+            else:
+                meta_img.result = prediction[i]['result']
+
             meta_img.save(flag=False)
 
         meta_result = []
