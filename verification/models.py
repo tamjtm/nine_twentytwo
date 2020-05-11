@@ -48,7 +48,7 @@ class Case(models.Model):
 
     @property
     def get_metaphases(self):
-        return MetaphaseImage.objects.filter(case=self).order_by('id')
+        return MetaphaseImage.objects.filter(case=self).order_by('-result')
 
     @property
     def get_new_metaphases(self):

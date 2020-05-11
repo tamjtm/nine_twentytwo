@@ -194,9 +194,11 @@
                                     <div class="carousel-item">
                                 {% endif %}
                                 <div class="d-flex">
-                                    <h5 class="p-1 mb-1 text-dark text-uppercase ml-auto">{{ img }}</h5>
                                     {% if perms.verification.change_case %}
+                                    <h5 class="p-1 mb-1 text-dark text-uppercase ml-auto">{{ case.id }}_{{ forloop.counter | stringformat:"02d" }}</h5>
                                     <a href="{% url 'retrain' img.id %}" class="h5 btn btn-outline-secondary btn-sm ml-auto" role="button">Label</a>
+                                    {% else %}
+                                    <h5 class="p-1 mb-1 text-dark text-uppercase mx-auto">{{ case.id }}_{{ forloop.counter | stringformat:"02d" }}</h5>
                                     {% endif %}
                                 </div>
                                 {% if img.result_image and perms.verification.change_case or case.confirm_status == 1 %}
