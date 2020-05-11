@@ -38,17 +38,19 @@
                     <hr class="mt-3 mb-3">
                     <div class="mt-2">
                         <strong>Result: </strong>
+                        {% if not perms.verification.change_case and case.confirm_status != 1  %}
+                        <small class="">(This result has not been verified)</small>
+                        {% endif %}
                         <!--  Interpretation For Case  -->
-                        {% if perms.verification.change_case or case.confirm_status == 1 %}
-                            {% if case.result == 0 %}
-                            <h5 class="text-success">No derivative chromosome is detected</h5>
-                            {% elif case.result == 1 %}
-                            <h5 class="text-danger">
-                                Philadelphia Abnormality is possible ({{ case.count_der }}/{{ case.get_metaphases|length }})
-                            </h5>
-                            {% else %}
-                            <h5 class="text-warning">This metaphase image can't be detected</h5>
-                            {% endif %}
+                        {% if case.result == 0 %}
+                        <h5 class="text-success">No derivative chromosome is detected</h5>
+                        {% elif case.result == 1 %}
+                        <h5 class="text-danger">
+                            Philadelphia Abnormality is possible ({{ case.count_der }}/{{ case.get_metaphases|length }})
+                        </h5>
+                        {% else %}
+                        <h5 class="text-warning">This metaphase image can't be detected</h5>
+                        {% endif %}
                         {% if not perms.verification.change_case and perms.verification.view_case %}
                         <form method="post" class="text-right" id="recheck-form">
                             {% csrf_token %}
@@ -98,11 +100,6 @@
                                 </div>
                             </div>
                         </form>
-                        {% endif %}
-                        {% elif case.confirm_status == 0 %}
-                        <h5 class="text-warning">Detection results are rejected</h5>
-                        {% else %}
-                        <h5 class="text-warning">Verification on pending</h5>
                         {% endif %}
                     </div>
 
@@ -160,20 +157,18 @@
                     {% endif %}
                 </div>
             </div>
-            {% if perms.verification.change_case and case.reject_message %}
+            {% if case.reject_message %}
             <div class="alert alert-danger mt-2 w-100" role="alert">
                 <i class="fas fa-comment-medical"></i> <strong>Medical Technician:</strong> {{ case.reject_message }}
             </div>
             {% endif %}
-            {% if perms.verification.change_case and case.recheck_message %}
+            {% if case.recheck_message %}
             <div class="alert alert-light mt-2 w-100" role="alert">
                 <i class="fas fa-comment-medical"></i> <strong>Physician:</strong> {{ case.recheck_message }}
             </div>
             {% endif %}
         </div>
         <div class="col-9">
-            {% if perms.verification.change_case or case.confirm_status %}
-
             <!--  Metaphase Images  -->
                 {% if case.get_metaphases %}
                     <div id="carouselExampleIndicators" class="carousel slide mx-auto" data-interval="false">
@@ -201,7 +196,7 @@
                                     <h5 class="p-1 mb-1 text-dark text-uppercase mx-auto">{{ case.id }}_{{ forloop.counter | stringformat:"02d" }}</h5>
                                     {% endif %}
                                 </div>
-                                {% if img.result_image and perms.verification.change_case or case.confirm_status == 1 %}
+                                {% if img.result_image %}
                                     <div class="row">
                                         <div class="col-7 text-center">
                                             <img class="d-block w-100" src="{{ img.result_image.url }}">
@@ -265,7 +260,7 @@
                                     <center>
                                         <img class="d-block w-50" src="{{ img.original_image.url }}">
                                     </center>
-                                        {% endif %}
+                                {% endif %}
                                 </div>
                                 {% endfor %}
                                 </div>
@@ -286,25 +281,6 @@
                     </div>
                     </center>
                 {% endif %}
-            {% else %}
-            {% if case.confirm_status == 0 %}
-                {% if case.reject_message %}
-                <div class="alert alert-danger mt-2 w-75 mx-auto text-center" role="alert">
-                    <i class="fas fa-comment-medical"></i> <strong>Medical Technician:</strong> {{ case.reject_message }}
-                </div>
-                {% else %}
-                <div class="alert alert-danger mt-2 w-75 mx-auto text-center" role="alert">
-                    <i class="fas fa-exclamation-triangle"></i> Detection results have been rejected by medical
-                    technician.
-                </div>
-                {% endif %}
-            {% else %}
-            <div class="alert alert-warning mt-2 w-75 mx-auto text-center" role="alert">
-                <i class="fas fa-exclamation-triangle"></i> Detection results have not been verified by medical
-                technician.
-            </div>
-            {% endif %}
-            {% endif %}
         </div>
     </div>
     {% if perms.verification.change_case %}
