@@ -364,6 +364,9 @@ def predict_9(ch_img, model_n, model_p, framed_img, all_contours):
     chromosome = 9
     s = 20  # start
     n = 36
+    if(len(ch_img)<n):
+        n = len(ch_img)
+        s = s-5
 
     predicted_N = model_n.predict_classes(ch_img[s:n])
     prob_n = model_n.predict(ch_img[s:n])
