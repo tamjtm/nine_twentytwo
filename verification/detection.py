@@ -362,19 +362,20 @@ def predict_22(ch_img, ch_img_s, model_find, model_classify, framed_img, all_con
 
 def predict_9(ch_img, model_n, model_p, framed_img, all_contours):
     chromosome = 9
+    s = 20  # start
     n = 36
 
-    predicted_N = model_n.predict_classes(ch_img[:n])
-    prob_n = model_n.predict(ch_img[:n])
-    predicted_P = model_p.predict_classes(ch_img[:n])
-    prob_p = model_p.predict(ch_img[:n])
+    predicted_N = model_n.predict_classes(ch_img[s:n])
+    prob_n = model_n.predict(ch_img[s:n])
+    predicted_P = model_p.predict_classes(ch_img[s:n])
+    prob_p = model_p.predict(ch_img[s:n])
     index_n, index_p, result_img, result_prob, result_pred = [], [], [], [], []
-    for j in range(len(ch_img)):
-        if j < n and len(result_img) < 4:
-            img = array_to_img(ch_img[j])
+    for j in range(len(ch_img)-s):
+        if j < (n-s) and len(result_img) < 4:
+            img = array_to_img(ch_img[j+s])
 
             if predicted_N[j] == 1 or predicted_P[j] == 1:
-                framed_img = framing(j, chromosome,len(result_img),framed_img,all_contours)
+                framed_img = framing(j+s, chromosome,len(result_img),framed_img,all_contours)
             if predicted_N[j] == 1 and predicted_P[j] == 1:
                 result_img.append(img)
                 index_p.append(j + 1)
